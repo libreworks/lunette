@@ -54,6 +54,7 @@ foreach (array('php', 'phtml', 'csv') as $suffix) {
  */
 $path = array(
     $lunetteSrc,
+    $lunetteSrc . DIRECTORY_SEPARATOR . 'library',
     $lunetteTests,
     get_include_path()
     );
