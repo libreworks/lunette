@@ -56,6 +56,7 @@ $path = array(
     $lunetteSrc,
     $lunetteSrc . DIRECTORY_SEPARATOR . 'library',
     $lunetteTests,
+    $lunetteTests . DIRECTORY_SEPARATOR . 'library', 
     get_include_path()
     );
 set_include_path(implode(PATH_SEPARATOR, $path));
