@@ -17,24 +17,24 @@
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
- * @package Lunette_Config
+ * @package Lunette_Cache
  * @subpackage Tests
  * @version $Id$
  */
 if (!defined('PHPUnit_MAIN_METHOD')) {
-    define('PHPUnit_MAIN_METHOD', 'Lunette_Config_AllTests::main');
+    define('PHPUnit_MAIN_METHOD', 'Lunette_Cache_AllTests::main');
 }
 require_once dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
 require_once 'Lunette/TestDbSetup.php';
-require_once 'Lunette/Config/ServiceTest.php';
+require_once 'Lunette/Cache/ServiceTest.php';
 require_once 'Lunette/Orm/Mapper.php';
 require_once 'Xyster/Orm/Loader.php';
 require_once 'Xyster/Orm.php';
 /**
- * The suite of tests for Lunette_Config
+ * The suite of tests for Lunette_Cache
  *
  */
-class Lunette_Config_AllTests extends PHPUnit_Framework_TestSuite
+class Lunette_Cache_AllTests extends PHPUnit_Framework_TestSuite
 {
     /**
      * Executes the suite
@@ -47,12 +47,12 @@ class Lunette_Config_AllTests extends PHPUnit_Framework_TestSuite
     /**
      * Gets the test suite
      *
-     * @return Lunette_Config_AllTests
+     * @return Lunette_Cache_AllTests
      */
     public static function suite()
     {
-        $suite = new self('Lunette Platform - Lunette_Config');
-        $suite->addTestSuite('Lunette_Config_ServiceTest');
+        $suite = new self('Lunette Platform - Lunette_Cache');
+        $suite->addTestSuite('Lunette_Cache_ServiceTest');
         return $suite;
     }
     
@@ -62,7 +62,7 @@ class Lunette_Config_AllTests extends PHPUnit_Framework_TestSuite
     protected function setUp()
     {
         $setup = new Lunette_TestDbSetup;
-        $setup->setupConfig();
+        $setup->setupCache();
         Lunette_Orm_Mapper::dsn('lunette', $setup->getDbAdapter());
         Xyster_Orm_Loader::addPath(dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/src/application/orm');
         $this->sharedFixture = Xyster_Orm::getInstance();
@@ -74,11 +74,11 @@ class Lunette_Config_AllTests extends PHPUnit_Framework_TestSuite
     protected function tearDown()
     {
         $setup = new Lunette_TestDbSetup;
-        $setup->tearDownConfig();
+        $setup->tearDownCache();
     }
 }
 
 
-if (PHPUnit_MAIN_METHOD == 'Lunette_Config_AllTests::main') {
-    Lunette_Config_AllTests::main();
+if (PHPUnit_MAIN_METHOD == 'Lunette_Cache_AllTests::main') {
+    Lunette_Cache_AllTests::main();
 }

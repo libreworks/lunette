@@ -25,6 +25,10 @@
  */
 require_once 'Zend/Config.php';
 /**
+ * @see Lunette_Orm_Service
+ */
+require_once 'Lunette/Orm/Service.php';
+/**
  * Lunette configuration service
  *
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
@@ -32,27 +36,12 @@ require_once 'Zend/Config.php';
  * @category Lunette
  * @package Lunette_Config
  */
-class Lunette_Config_Service
+class Lunette_Config_Service extends Lunette_Orm_Service
 {
     /**
-     * @var boolean
+     * @var string
      */
-    protected $_delayCommit = false;
-    
-    /**
-     * @var Xyster_Orm
-     */
-    protected $_orm;
-    
-    /**
-     * Creates the configuration service
-     *
-     * @param Xyster_Orm $orm The orm session
-     */
-    public function __construct( Xyster_Orm $orm )
-    {
-        $this->_orm = $orm;
-    }
+    protected $_class = 'LunetteConfig';
     
     /**
      * Gets a configuration setting for a extension 
@@ -211,7 +200,7 @@ class Lunette_Config_Service
         foreach( array_keys($settings) as $name ) {
             $keys[] = array('system'=>$system, 'name'=>$name);
         }
-        $this->_orm->getAll('LunetteConfig', $keys);
+        $this->_getAll($keys);
         
         foreach( $settings as $name => $value ) {
             $this->_set($system, $name, $value);

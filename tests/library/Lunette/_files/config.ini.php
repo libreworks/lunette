@@ -5,4 +5,6 @@
 
 [lunette]
 
+database.adapter = Pdo_Sqlite
 database.host = localhost
+database.name = ":memory:"

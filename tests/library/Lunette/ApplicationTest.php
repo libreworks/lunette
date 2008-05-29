@@ -58,6 +58,17 @@ class Lunette_ApplicationTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests the 'getDatabaseAdapter' method
+     *
+     */
+    public function testGetDatabaseAdapter()
+    {
+        $adapter = $this->object->getDatabaseAdapter();
+        $this->assertType('Zend_Db_Adapter_Abstract', $adapter);
+        $this->assertSame($adapter, Zend_Registry::get(md5('lunette')));
+    }
+    
+    /**
      * Tests the 'getSystemConfig' method
      */
     public function testGetSystemConfig()

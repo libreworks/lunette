@@ -17,13 +17,21 @@
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
- * @package Lunette_Version
+ * @package Lunette_Application
  * @version $Id$
  */
 /**
  * Zend_Config_Ini
  */
 require_once 'Zend/Config/Ini.php';
+/**
+ * Zend_Db
+ */
+require_once 'Zend/Db.php';
+/**
+ * Zend_Registry
+ */
+require_once 'Zend/Registry.php';
 /**
  * Lunette application class
  *
@@ -38,6 +46,46 @@ class Lunette_Application
      * @var Zend_Config
      */
     protected $_config;
+    
+    /**
+     * The registry key to use for the database adapter
+     * 
+     * It's an MD5 hash of the word "lunette"
+     *
+     * @var string
+     */
+    private static $_dbRegistryKey = '3db1706f5b1d717cb340f7cbe08a0af5';
+    
+    /**
+     * Gets the database adapter
+     *
+     * Try not to use this method to do things with the database.  Xyster_Orm
+     * exists for this purpose.  This method should be used by low-level parts
+     * of the system.
+     * 
+     * @return Zend_Db_Adapter_Abstract
+     */
+    public function getDatabaseAdapter()
+    {
+        if ( !Zend_Registry::isRegistered(self::$_dbRegistryKey) ) {
+            $config = $this->getSystemConfig();
+            $dbConfig = array(
+                    'dbname' => $config->database->name,
+                    'username' => $config->database->username,
+                    'password' => $config->database->password,
+                    'host' => $config->database->host
+                );
+            if ( isset($config->database->port) ) {
+                $dbConfig['port'] = $config->database->port;
+            }
+            if ( isset($config->database->case_folding) ) {
+                $dbConfig['caseFolding'] = $config->database->case_folding;
+            }
+            $db = Zend_Db::factory($config->database->adapter, $dbConfig);
+            Zend_Registry::set(self::$_dbRegistryKey, $db);
+        }
+        return Zend_Registry::get(self::$_dbRegistryKey);
+    }
     
     /**
      * Gets the configuration from the Lunette configuration file
