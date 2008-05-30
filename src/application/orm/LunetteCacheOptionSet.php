@@ -21,48 +21,17 @@
  * @version $Id$
  */
 /**
- * Xyster_Orm_Entity
+ * Xyster_Orm_Set
  */
-require_once 'Xyster/Orm/Entity.php';
+require_once 'Xyster/Orm/Set.php';
 /**
- * A cache system
+ * A set for {@link LunetteCacheOption} objects
  *
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
  * @package Lunette_Orm
  */
-class LunetteCache extends Xyster_Orm_Entity
+class LunetteCacheOptionSet extends Xyster_Orm_Set
 {
-    /**
-     * Returns the frontend options
-     *
-     * @return array
-     */
-    public function getFrontendOptions()
-    {
-        return array(
-                'cache_id_prefix' => $this->cacheIdPrefix,
-                'lifetime' => intval($this->lifetime),
-                'write_control' => $this->writeControl,
-                'automatic_serialization' => $this->automaticSerialization,
-                'automatic_cleaning_factor' => intval($this->automaticCleaningFactor),
-                'ignore_user_abort' => $this->ignoreUserAbort
-            );
-    }
-    
-    /**
-     * Gets the values of the options assigned to this cache system
-     *
-     * @return array
-     */
-    public function getBackendOptions()
-    {
-        $options = array();
-        foreach( $this->options as $option ) {
-            /* @var $option LunetteCacheOption */
-            $options[$option->name] = $option->getRealValue();
-        }
-        return $options;
-    }
 }

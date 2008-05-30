@@ -21,48 +21,24 @@
  * @version $Id$
  */
 /**
- * Xyster_Orm_Entity
+ * @see Lunette_Orm_Mapper
  */
-require_once 'Xyster/Orm/Entity.php';
+require_once 'Lunette/Orm/Mapper.php';
 /**
- * A cache system
+ * Mapper for {@link LunetteCacheOption}
  *
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
  * @package Lunette_Orm
  */
-class LunetteCache extends Xyster_Orm_Entity
+class LunetteCacheOptionMapper extends Lunette_Orm_Mapper
 {
     /**
-     * Returns the frontend options
-     *
-     * @return array
+     * Sets up the mapper
      */
-    public function getFrontendOptions()
+    public function init()
     {
-        return array(
-                'cache_id_prefix' => $this->cacheIdPrefix,
-                'lifetime' => intval($this->lifetime),
-                'write_control' => $this->writeControl,
-                'automatic_serialization' => $this->automaticSerialization,
-                'automatic_cleaning_factor' => intval($this->automaticCleaningFactor),
-                'ignore_user_abort' => $this->ignoreUserAbort
-            );
-    }
-    
-    /**
-     * Gets the values of the options assigned to this cache system
-     *
-     * @return array
-     */
-    public function getBackendOptions()
-    {
-        $options = array();
-        foreach( $this->options as $option ) {
-            /* @var $option LunetteCacheOption */
-            $options[$option->name] = $option->getRealValue();
-        }
-        return $options;
+        $this->_belongsTo('config', array('class'=>'LunetteConfig'));
     }
 }

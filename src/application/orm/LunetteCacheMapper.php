@@ -34,4 +34,11 @@ require_once 'Lunette/Orm/Mapper.php';
  */
 class LunetteCacheMapper extends Lunette_Orm_Mapper
 {
+    /**
+     * Sets up the mapper
+     */
+    public function init()
+    {
+        $this->_hasMany('options', array('class'=>'LunetteCacheOption'));
+    }
 }

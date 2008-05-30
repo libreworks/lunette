@@ -74,10 +74,17 @@ class Lunette_Cache_ServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testCreate()
     {
-        $cache = $this->object->create('foo', 'Zend_Cache_Backend_File');
+        $origOptions = array('foo'=>'bar', 'abc'=>123, 'lifetime'=>7200);
+        $cache = $this->object->create('foo', 'Zend_Cache_Backend_File', $origOptions);
         $this->assertType('LunetteCache', $cache);
         $this->assertEquals('foo', $cache->name);
         $this->assertEquals('Zend_Cache_Backend_File', $cache->type);
+        $this->assertEquals(7200, $cache->lifetime);
+        $options = array('lifetime'=>7200);
+        foreach( $cache->options as $cacheOption ) {
+            $options[$cacheOption->name] = unserialize($cacheOption->value);
+        }
+        $this->assertEquals($origOptions, $options);
         $entity = Xyster_Orm::getInstance()->get('LunetteCache', $cache->lunetteCacheId);
         $this->assertSame($cache, $entity);
         // pre-existing cache names should error

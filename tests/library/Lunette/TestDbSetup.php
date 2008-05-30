@@ -89,6 +89,22 @@ class Lunette_TestDbSetup
                 ->addIdentity('lunette_cache_id')
                 ->addVarchar('name', 255)->unique()
                 ->addVarchar('type', 255)
+                ->addVarchar('cache_id_prefix', 255)->null()
+                ->addInteger('lifetime')->defaultValue(3600)->null()
+                ->addBoolean('write_control')->defaultValue(true)->null()
+                ->addBoolean('automatic_serialization')->defaultValue(false)->null()
+                ->addInteger('automatic_cleaning_factor')->defaultValue(10)->null()
+                ->addBoolean('ignore_user_abort')->defaultValue(false)->null()
+                ->execute();
+        }
+        if ( in_array('lunette_cache_option', $db->listTables()) ) {
+            $db->query('DELETE FROM lunette_cache_option');
+        } else {
+            $this->_getGateway()->createTable('lunette_cache_option')
+                ->addIdentity('lunette_cache_option_id')
+                ->addInteger('lunette_cache_id')
+                ->addVarchar('name', 255)
+                ->addVarchar('value', 255)
                 ->execute();
         }
     }
@@ -99,6 +115,7 @@ class Lunette_TestDbSetup
     public function tearDownCache()
     {
         $this->_getGateway()->dropTable('lunette_cache');
+        $this->_getGateway()->dropTable('lunette_cache_option');
     }
     
     /**

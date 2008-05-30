@@ -44,15 +44,45 @@ class Lunette_Cache_Service extends Lunette_Orm_Service
     protected $_class = 'LunetteCache';
     
     /**
+     * The frontend options and their defaults
+     *
+     * @var array
+     */
+    protected static $_frontendOptions = array(
+            'cacheIdPrefix' => null,
+            'lifetime' => 3600,
+            'writeControl' => 1,
+            'automaticSerialization' => 0,
+            'automaticCleaningFactor' => 10,
+            'ignoreUserAbort' => 0
+        );
+    
+    /**
      * Creates a new cache system
      *
+     * The options array should be an associative array of options to be passed
+     * to the cache frontend and backend objects.  There are default options
+     * available with all configuration frontends.
+     * * cacheIdPrefix
+     * * lifetime
+     * * writeControl
+     * * automaticSerialization
+     * * automaticCleaningFactor
+     * * ignoreUserAbort
+     * See the Zend_Config frontend documentation for more information on these
+     * options. 
+     * 
+     * There are no common options amongst backend systems; some don't even have
+     * options available.
+     * 
      * @param string $name The name of the cache
      * @param string $type The class name used by the cache system
-     * @param array $values The configuration options. Depends on class.
+     * @param array $options The configuration options. Depends on class.
      * @return LunetteCache
      */
-    public function create( $name, $type, array $values = array() )
+    public function create( $name, $type, array $options = array() )
     {
+        $this->_orm->setup('LunetteCacheOption');
         if ( $this->isCacheSystem($name) ) {
             require_once 'Xyster/Orm/Exception.php';
             throw new Xyster_Orm_Exception('A cache system with this name already exists');
@@ -60,6 +90,19 @@ class Lunette_Cache_Service extends Lunette_Orm_Service
         $cache = new LunetteCache;
         $cache->name = $name;
         $cache->type = $type;
+        foreach( self::$_frontendOptions as $k => $v ) {
+            $cache->$k = $v;
+        }
+        foreach( $options as $option => $value ) {
+            if ( in_array($option, array_keys(self::$_frontendOptions)) ) {
+                $cache->$option = $value;
+            } else {
+                $cacheOption = new LunetteCacheOption;
+                $cacheOption->name = $option;
+                $cacheOption->value = serialize($value);
+                $cache->options->add($cacheOption);
+            }
+        }
         $this->_orm->persist($cache);
         if ( !$this->_delayCommit ) {
             $this->_orm->commit();
@@ -100,7 +143,8 @@ class Lunette_Cache_Service extends Lunette_Orm_Service
     {
         $cache = $this->getByName($name);
         return Zend_Cache::factory('core',
-            str_replace('Zend_Cache_Backend_', '', $cache->type), array(), array());
+            str_replace('Zend_Cache_Backend_', '', $cache->type),
+            $cache->getFrontendOptions(), $cache->getBackendOptions());
     }
     
     /**
