@@ -67,7 +67,7 @@ class Lunette_Package_Tar_Bz2 extends Lunette_Package_Tar
      */
     protected function _fopen($filename)
     {
-        return @bzopen($filename, "rb");
+        return @bzopen($filename, "r");
     }
 
     /**
