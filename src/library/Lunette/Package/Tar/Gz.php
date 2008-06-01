@@ -35,6 +35,21 @@ require_once 'Lunette/Package/Tar.php';
 class Lunette_Package_Tar_Gz extends Lunette_Package_Tar
 {
     /**
+     * Creates a new tar archive reader
+     *
+     * @param string $name  The name of the tar archive to read
+     * @throws Lunette_Package_Tar_Exception if the zlib extension isn't loaded
+     */
+    public function __construct($name)
+    {
+        if ( !extension_loaded('zlib') ) {
+            require_once 'Lunette/Package/Tar/Exception.php';
+            throw new Lunette_Package_Tar_Exception('Zlib extension must be enabled to extract .tar.gz archives');
+        }
+        parent::__construct($name);
+    }
+    
+    /**
      * Closes the file stream
      *
      * @param resource $resource

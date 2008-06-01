@@ -35,6 +35,21 @@ require_once 'Lunette/Package/Tar.php';
 class Lunette_Package_Tar_Bz2 extends Lunette_Package_Tar
 {
     /**
+     * Creates a new Bzip2 tar archive reader
+     *
+     * @param string $name  The name of the tar archive to read
+     * @throws Lunette_Package_Tar_Exception if the bz2 extension isn't loaded
+     */
+    public function __construct($name)
+    {
+        if ( !extension_loaded('bz2') ) {
+            require_once 'Lunette/Package/Tar/Exception.php';
+            throw new Lunette_Package_Tar_Exception('Bz2 extension must be enabled to extract .tar.bz2 archives');
+        }
+        parent::__construct($name);
+    }
+    
+    /**
      * Closes the file stream
      *
      * @param resource $resource

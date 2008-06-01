@@ -41,12 +41,6 @@ class Lunette_Package_Tar
     protected $_file;
 
     /**
-     * Local filename if archive is remote
-     * @var string
-     */
-    protected $_localName='';
-
-    /**
      * Creates a new tar archive reader
      *
      * @param string $name  The name of the tar archive to read
@@ -67,10 +61,36 @@ class Lunette_Package_Tar
     }
 
     /**
+     * Extracts the archive
+     * 
+     * You can have the beginning of the filename removed by specifying the
+     * $removePath parameter.  If the archive filename is
+     * <code>example/test/folder/file.txt</code> and you specify $removePath to
+     * be <code>example/test</code>, that part will be removed.
+     * 
+     * All directories are recursively created.
+     * 
+     * Existing files will be overwritten (if existing files are not writable,
+     * an exception will be thrown.)  An exception will be thrown if extracting
+     * a file and a directory with the same name already exists, or extracting
+     * a directory and a file with the same name already exists.  An exception
+     * will be thrown if the file's size on the filesystem doesn't match the
+     * size listed in the archive.
+     *
+     * @param string $path The path of the directory where the files/dir need to by extracted.
+     * @param string $removePath  Part of the memorized path that can be removed if present at the beginning of the file/dir path.
+     * @throws Lunette_Package_Tar_Exception if an error occurs
+     */
+    public function extract($path, $removePath = null)
+    {
+        $contents = $this->_extract($path, false, array(), $removePath);
+    }
+
+    /**
      * Extracts one file from the archive
      * 
      * @return string The file contents
-     * @throws Lunette_Package_Exception if an error occurs
+     * @throws Lunette_Package_Tar_Exception if an error occurs
      */
     public function extractFile($filename)
     {
@@ -87,8 +107,8 @@ class Lunette_Package_Tar
             }
             if ($header['filename'] == $filename) {
                 if ($header['typeflag'] == "5") {
-                    require_once 'Lunette/Package/Exception.php';
-                    throw new Lunette_Package_Exception('Cannot extract a directory: ' . $header['filename']);
+                    require_once 'Lunette/Package/Tar/Exception.php';
+                    throw new Lunette_Package_Tar_Exception('Cannot extract a directory: ' . $header['filename']);
                 } else {
                     $n = floor($header['size'] / 512);
                     for ($i=0; $i<$n; $i++) {
@@ -108,52 +128,6 @@ class Lunette_Package_Tar
 
         return $fileContents;
     }    
-    
-    /**
-     * Lists the contents of the archive
-     *
-     * @return array
-     */
-    public function ls()
-    {
-        return $this->_extractList(null, true);
-    }
-
-    /**
-     * Extracts the archive
-     * 
-     * When relevant, the memorized path of the files/dir can be modified by
-     * removing the $p_remove_path path at the beginning of the file/dir path.
-     * 
-     * While extracting a file, if the directory path does not exists it is
-     * created.
-     * 
-     * While extracting a file, if the file already exists it is replaced
-     * without looking for last modification date.
-     * 
-     * While extracting a file, if the file already exists and is write
-     * protected, the extraction is aborted.
-     * 
-     * While extracting a file, if a directory with the same name already
-     * exists, the extraction is aborted.
-     * 
-     * While extracting a directory, if a file with the same name already
-     * exists, the extraction is aborted.
-     * 
-     * While extracting a file/directory if the destination directory exist
-     * and is write protected, or does not exist but can not be created,
-     * the extraction is aborted.
-     * 
-     * If after extraction an extracted file does not show the correct
-     * stored file size, the extraction is aborted.
-     *
-     * @param string $path The path of the directory where the files/dir need to by extracted.
-     * @param string $removePath  Part of the memorized path that can be removed if present at the beginning of the file/dir path.
-     */
-    public function extract($path, $removePath = null)
-    {
-        $contents = $this->_extractList($path, false, array(), $removePath);
-    }
 
     /**
      * Extracts a list of files from the archive
@@ -161,21 +135,38 @@ class Lunette_Package_Tar
      * If indicated the $removePath can be used in the same way as it is
      * used in the extract() method.
      * 
-     * @param array $fileList     An array of filenames and directory names,
-     *                               or a single string with names separated
-     *                               by a single blank space.
-     * @param string $path         The path of the directory where the
-     *                               files/dir need to by extracted.
-     * @param string $removePath Part of the memorized path that can be
-     *                               removed if present at the beginning of
-     *                               the file/dir path.
+     * @param array $fileList An array of filenames and directory names
+     * @param string $path The path where the will be extracted
+     * @param string $removePath Will be removed from the beginning of files
      * @see extract()
      */
     public function extractList(array $fileList, $path='', $removePath='')
     {
-        $this->_extractList($path, false, $fileList, $removePath);
+        $this->_extract($path, false, $fileList, $removePath);
     }
-
+        
+    /**
+     * Lists the contents of the archive
+     *
+     * The returned array contains arrays with the header information for each
+     * file.  The following header fields are available:
+     * 
+     * - filename
+     * - checksum
+     * - typeflag
+     * - mode
+     * - uid
+     * - gid
+     * - size
+     * - mtime
+     * 
+     * @return array
+     */
+    public function ls()
+    {
+        return $this->_extract(null, true);
+    }
+    
     /**
      * Extracts (or lists) the files in the archive
      *
@@ -185,7 +176,7 @@ class Lunette_Package_Tar
      * @param string $removePath
      * @return array Containing the filenames extracted or listed
      */
-    private function _extractList( $path, $onlyList = false, array $fileList = array(), $removePath = null)
+    private function _extract( $path, $onlyList = false, array $fileList = array(), $removePath = null)
     {
         $extractAll = !$onlyList && !count($fileList);
         
@@ -233,16 +224,16 @@ class Lunette_Package_Tar
                 }
                 if (file_exists($header['filename'])) {
                     if (@is_dir($header['filename']) && $header['typeflag'] == '') {
-                        require_once 'Lunette/Package/Exception.php';
-                        throw new Lunette_Package_Exception('Directory exists: ' . $header['filename']);
+                        require_once 'Lunette/Package/Tar/Exception.php';
+                        throw new Lunette_Package_Tar_Exception('File already exists as a directory: ' . $header['filename']);
                     }
-                    if ($this->_isArchive($header['filename']) && $header['typeflag'] == "5") {
-                        require_once 'Lunette/Package/Exception.php';
-                        throw new Lunette_Package_Exception('File exists: ' . $header['filename']);
+                    if ($this->_exists($header['filename']) && $header['typeflag'] == "5") {
+                        require_once 'Lunette/Package/Tar/Exception.php';
+                        throw new Lunette_Package_Tar_Exception('Directory already exists as a file: ' . $header['filename']);
                     }
                     if (!is_writeable($header['filename'])) {
-                        require_once 'Lunette/Package/Exception.php';
-                        throw new Lunette_Package_Exception('Cannot write to file: ' . $header['filename']);
+                        require_once 'Lunette/Package/Tar/Exception.php';
+                        throw new Lunette_Package_Tar_Exception('Cannot overwrite existing file: ' . $header['filename']);
                     }
                 } else {
                     $this->_createDirectory($header['typeflag'] == "5" ?
@@ -250,22 +241,17 @@ class Lunette_Package_Tar
                 }
 
                 if ($header['typeflag'] == "5") {
-                    if (!@file_exists($header['filename'])) {
-                        if (!@mkdir($header['filename'], 0777)) {
-                            require_once 'Lunette/Package/Exception.php';
-                            throw new Lunette_Package_Exception('Unable to create directory: ' . $header['filename']);
-                        }
+                    if (!@file_exists($header['filename']) && !@mkdir($header['filename'], 0777)) {
+                        require_once 'Lunette/Package/Tar/Exception.php';
+                        throw new Lunette_Package_Tar_Exception('Unable to create directory: ' . $header['filename']);
                     }
                 } else if ($header['typeflag'] == "2") {
                     if (!@symlink($header['link'], $header['filename'])) {
-                        require_once 'Lunette/Package/Exception.php';
-                        throw new Lunette_Package_Exception('Unable to extract symbolic link: ' . $header['filename']);
+                        require_once 'Lunette/Package/Tar/Exception.php';
+                        throw new Lunette_Package_Tar_Exception('Unable to extract symbolic link: ' . $header['filename']);
                     }
                 } else {
-                    if (($destFile = @fopen($header['filename'], "wb")) == 0) {
-                        require_once 'Lunette/Package/Exception.php';
-                        throw new Lunette_Package_Exception('Error while opening for writing in binary mode: ' . $header['filename']);
-                    } else {
+                    if ($destFile = @fopen($header['filename'], "wb")) {
                         $n = floor($header['size'] / 512);
                         for ($i=0; $i<$n; $i++) {
                             $content = $this->_readBlock();
@@ -278,25 +264,27 @@ class Lunette_Package_Tar
 
                         @fclose($destFile);
 
-                        // ----- Change the file mode, mtime
                         @touch($header['filename'], $header['mtime']);
                         if ($header['mode'] & 0111) {
-                            // make file executable, obey umask
                             $mode = fileperms($header['filename']) | (~umask() & 0111);
                             @chmod($header['filename'], $mode);
                         }
+                    } else {
+                        require_once 'Lunette/Package/Tar/Exception.php';
+                        throw new Lunette_Package_Tar_Exception('Cannot write to file: ' . $header['filename']);
                     }
 
                     clearstatcache();
                     if (filesize($header['filename']) != $header['size']) {
-                        require_once 'Lunette/Package/Exception.php';
-                        throw new Lunette_Package_Exception('Extracted file ' . $header['filename'] . 
+                        require_once 'Lunette/Package/Tar/Exception.php';
+                        throw new Lunette_Package_Tar_Exception('Extracted file ' . $header['filename'] . 
                             ' does not have the correct file size (' . filesize($header['filename']) .
                             ') (' . $header['size'] . ' expected). Archive may be corrupted.');
                     }
                 }
             } else {
-                $this->_jumpBlock(ceil(($header['size']/512)));
+                // we don't need to extract this file, skip it
+                $this->_jumpBlock(ceil(($header['size'] / 512)));
             }
 
             if ($onlyList || $extractFile) {
@@ -320,7 +308,7 @@ class Lunette_Package_Tar
     /**
      * Opens the stream
      * 
-     * @throws Lunette_Package_Exception if a file access error occurs
+     * @throws Lunette_Package_Tar_Exception if a file access error occurs
      */
     private function _open()
     {
@@ -328,33 +316,27 @@ class Lunette_Package_Tar
 
         // if we have a remote file
         if (preg_match('#^[a-z0-9]+://#', $this->_name)) {
-
-          if ($this->_localName == '') {
-              $this->_localName = uniqid('tar').'.tmp';
-              if (!$source = @fopen($this->_name, 'rb')) {
-                  $this->_localName = '';
-                  require_once 'Lunette/Package/Exception.php';
-                  throw new Lunette_Package_Exception('Unable to read file: ' . $this->_name);
-              }
-              if (!$destination = @fopen($this->_localName, 'wb')) {
-                  $this->_localName = '';
-                  require_once 'Lunette/Package/Exception.php';
-                  throw new Lunette_Package_Exception('Unable to write file: ' . $this->_localName);
-              }
-              if ( @stream_copy_to_stream($source, $destination) === false ) {
-                  $error = error_get_last();
-                  require_once 'Lunette/Package/Exception.php';
-                  throw new Lunette_Package_Exception('Cannot make a local copy of the file: ' . $error['message']);
-              }
-          }
-          $filename = $this->_localName;
-
+            if (!$source = @fopen($this->_name, 'rb')) {
+                require_once 'Lunette/Package/Tar/Exception.php';
+                throw new Lunette_Package_Tar_Exception('Unable to read file: ' . $this->_name);
+            }
+            $name = tempnam(sys_get_temp_dir(), get_class($this));
+            if (!$destination = @fopen($name, 'wb')) {
+                require_once 'Lunette/Package/Tar/Exception.php';
+                throw new Lunette_Package_Tar_Exception('Unable to write to file: ' . $name);
+            }
+            if ( @stream_copy_to_stream($source, $destination) === false ) {
+                $error = error_get_last();
+                require_once 'Lunette/Package/Tar/Exception.php';
+                throw new Lunette_Package_Tar_Exception('Cannot make a local copy of the file: ' . $error['message']);
+            }
+            $filename = $name;
         }
-
+        
         $this->_file = $this->_fopen($filename);
         if ($this->_file === false) {
-            require_once 'Lunette/Package/Exception.php';
-            throw new Lunette_Package_Exception('Unable to read file: ' . $filename);
+            require_once 'Lunette/Package/Tar/Exception.php';
+            throw new Lunette_Package_Tar_Exception('Unable to read file: ' . $filename);
         }
 
         return true;
@@ -377,16 +359,13 @@ class Lunette_Package_Tar
     }
 
     /**
-     * Tests if an archive exists
+     * Tests if a file exists
      *
      * @param string filename
      * @return boolean
      */
-    private function _isArchive($filename = null)
+    private function _exists($filename)
     {
-        if ($filename === null) {
-            $filename = $this->_name;
-        }
         clearstatcache();
         return @is_file($filename);
     }
@@ -396,38 +375,33 @@ class Lunette_Package_Tar
      *
      * @param string $data
      * @return array 
-     * @throws Lunette_Package_Exception if the block size is invalid
+     * @throws Lunette_Package_Tar_Exception if the block size is invalid
      */
     protected function _readHeader($data)
     {
         if (strlen($data) == 0) {
             return array('filename' => '');
         }
-
         if (strlen($data) != 512) {
-            require_once 'Lunette/Package/Exception.php';
-            throw new Lunette_Package_Exception('Invalid block size : '.strlen($data));
+            require_once 'Lunette/Package/Tar/Exception.php';
+            throw new Lunette_Package_Tar_Exception('Invalid block size : '.strlen($data));
         }
 
         /* I CAN HAS CHECKSUM? */
         $checkSum = 0;
-        // First part of the header
-        for ($i=0; $i<148; $i++) {
+        for ($i=0; $i<148; $i++) {                   // First part of the header
             $checkSum += ord(substr($data, $i, 1));
         }
-        // Ignore the checksum value and replace it with a space
-        for ($i=148; $i<156; $i++) {
+        for ($i=148; $i<156; $i++) {      // Replace checksum value with a space
             $checkSum += ord(' ');
         }
-        // Last part of the header
-        for ($i=156; $i<512; $i++) {
+        for ($i=156; $i<512; $i++) {                  // Last part of the header
             $checkSum += ord(substr($data, $i, 1));
         }
 
         $data = unpack("a100filename/a8mode/a8uid/a8gid/a12size/a12mtime/"
                          ."a8checksum/a1typeflag/a100link/a6magic/a2version/"
-                         ."a32uname/a32gname/a8devmajor/a8devminor",
-                         $data);
+                         ."a32uname/a32gname/a8devmajor/a8devminor", $data);
 
         $header = array('checksum' => octdec(trim($data['checksum'])));
         if ($header['checksum'] != $checkSum) {
@@ -436,10 +410,10 @@ class Lunette_Package_Tar
             if (($checkSum == 256) && ($header['checksum'] == 0)) {
                 return $header;
             }
-
-            require_once 'Lunette/Package/Exception.php';
-            throw new Lunette_Package_Exception('Invalid checksum for ' . $data['filename'] . 
-                          ' (Got '.$checkSum.', expected ' . $header['checksum']);
+            require_once 'Lunette/Package/Tar/Exception.php';
+            throw new Lunette_Package_Tar_Exception('Invalid checksum for ' .
+                $data['filename'] . ' (Got '.$checkSum.', expected ' .
+                $header['checksum']);
         }
 
         $header['filename'] = trim($data['filename']);
@@ -466,7 +440,7 @@ class Lunette_Package_Tar
     {
         $filename = '';
         $content = '';
-        $n = floor($header['size']/512);
+        $n = floor($header['size'] / 512);
         for ($i=0; $i<$n; $i++) {
             $content = $this->_readBlock();
             $filename .= $content;
@@ -503,8 +477,8 @@ class Lunette_Package_Tar
         }
 
         if (!@mkdir($directory, 0777)) {
-            require_once 'Lunette/Package/Exception.php';
-            throw new Lunette_Package_Exception("Unable to create directory: " . $directory);
+            require_once 'Lunette/Package/Tar/Exception.php';
+            throw new Lunette_Package_Tar_Exception("Unable to create directory: " . $directory);
         }
 
         return true;
@@ -536,15 +510,13 @@ class Lunette_Package_Tar
      * Look for a directory traversal in the filename
      *
      * @param string $file
-     * @throws Lunette_Package_Exception if the filename contains a traversal
+     * @throws Lunette_Package_Tar_Exception if the filename contains a traversal
      */
     private function _checkTraversal($filename)
     {
-        if (strpos($filename, '/../') !== false ||
-            strpos($filename, '../') === 0) {
-            require_once 'Lunette/Package/Exception.php';
-            throw new Lunette_Package_Exception('The filename "' . $filename .
-                '" contains a directory traversal and will not be installed');
+        if (strpos($filename, '/../') !== false || strpos($filename, '../') === 0) {
+            require_once 'Lunette/Package/Tar/Exception.php';
+            throw new Lunette_Package_Tar_Exception('Directory traversal; will not be extracted: ' . $filename);
         }
     }
 
