@@ -25,9 +25,16 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Lunette_Package_AllTests::main');
 }
 require_once dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
-require_once 'Lunette/Package/TarTest.php';
-require_once 'Lunette/Package/Tar/Bz2Test.php';
-require_once 'Lunette/Package/Tar/GzTest.php';
+require_once 'Lunette/Package/Archive/ArTest.php';
+require_once 'Lunette/Package/Archive/TarTest.php';
+require_once 'Lunette/Package/Archive/TarBz2Test.php';
+require_once 'Lunette/Package/Archive/TarGzTest.php';
+require_once 'Lunette/Package/ReaderTest.php';
+require_once 'Lunette/Package/Reader/Bz2Test.php';
+require_once 'Lunette/Package/Reader/DelegateTest.php';
+require_once 'Lunette/Package/Reader/FileTest.php';
+require_once 'Lunette/Package/Reader/GzTest.php';
+require_once 'Lunette/Package/WriterTest.php';
 
 /**
  * The suite of tests for Lunette_Package
@@ -51,13 +58,19 @@ class Lunette_Package_AllTests extends PHPUnit_Framework_TestSuite
     public static function suite()
     {
         $suite = new self('Lunette Platform - Lunette_Package');
-        $suite->addTestSuite('Lunette_Package_TarTest');
-        $suite->addTestSuite('Lunette_Package_Tar_Bz2Test');
-        $suite->addTestSuite('Lunette_Package_Tar_GzTest');
+        $suite->addTestSuite('Lunette_Package_Archive_ArTest');
+        $suite->addTestSuite('Lunette_Package_Archive_TarTest');
+        $suite->addTestSuite('Lunette_Package_Archive_TarBz2Test');
+        $suite->addTestSuite('Lunette_Package_Archive_TarGzTest');
+        $suite->addTestSuite('Lunette_Package_ReaderTest');
+        $suite->addTestSuite('Lunette_Package_Reader_Bz2Test');
+        $suite->addTestSuite('Lunette_Package_Reader_DelegateTest');
+        $suite->addTestSuite('Lunette_Package_Reader_FileTest');
+        $suite->addTestSuite('Lunette_Package_Reader_GzTest');
+        $suite->addTestSuite('Lunette_Package_WriterTest');
         return $suite;
     }
 }
-
 
 if (PHPUnit_MAIN_METHOD == 'Lunette_Package_AllTests::main') {
     Lunette_Package_AllTests::main();

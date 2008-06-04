@@ -25,13 +25,13 @@
  */
 require_once 'Lunette/Package/Exception.php';
 /**
- * Lunette tape archive package exception
+ * Reader exception
  *
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
  * @package Lunette_Package
  */
-class Lunette_Package_Tar_Exception extends Lunette_Package_Exception
+class Lunette_Package_Reader_Exception extends Lunette_Package_Exception
 {
 }
