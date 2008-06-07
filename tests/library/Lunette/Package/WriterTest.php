@@ -90,7 +90,7 @@ class Lunette_Package_WriterTest extends PHPUnit_Framework_TestCase
     public function testGetWriteStream()
     {
         $this->_createSandbox();
-        $filename = 'test.txt';
+        $filename = $this->_getSandboxName() . '/test.txt';
         $stream = $this->object->getWriteStream($filename);
         $this->assertTrue(is_resource($stream));
     }
