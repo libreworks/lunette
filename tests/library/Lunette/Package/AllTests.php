@@ -36,6 +36,7 @@ require_once 'Lunette/Package/Reader/FileTest.php';
 require_once 'Lunette/Package/Reader/GzTest.php';
 require_once 'Lunette/Package/RelationTest.php';
 require_once 'Lunette/Package/RelationTypeTest.php';
+require_once 'Lunette/Package/Relation/SetTest.php';
 require_once 'Lunette/Package/StateTest.php';
 require_once 'Lunette/Package/WriterTest.php';
 
@@ -72,6 +73,7 @@ class Lunette_Package_AllTests extends PHPUnit_Framework_TestSuite
         $suite->addTestSuite('Lunette_Package_Reader_GzTest');
         $suite->addTestSuite('Lunette_Package_RelationTest');
         $suite->addTestSuite('Lunette_Package_RelationTypeTest');
+        $suite->addTestSuite('Lunette_Package_Relation_SetTest');
         $suite->addTestSuite('Lunette_Package_StateTest');
         $suite->addTestSuite('Lunette_Package_WriterTest');
         return $suite;

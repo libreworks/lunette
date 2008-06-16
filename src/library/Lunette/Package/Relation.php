@@ -25,6 +25,10 @@
  */
 require_once 'Lunette/Package/RelationType.php';
 /**
+ * @see Lunette_Package_Relation_Interface
+ */
+require_once 'Lunette/Package/Relation/Interface.php';
+/**
  * Package relation information
  *
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
@@ -32,7 +36,7 @@ require_once 'Lunette/Package/RelationType.php';
  * @category Lunette
  * @package Lunette_Package
  */
-class Lunette_Package_Relation
+class Lunette_Package_Relation implements Lunette_Package_Relation_Interface
 {
     /**
      * @var Lunette_Package_Interface
@@ -154,7 +158,7 @@ class Lunette_Package_Relation
     protected function _parseRequirement( $req )
     {
         $match = array();
-        if ( preg_match('/(?P<name>[a-z\-]+)(\s*\((?P<op>>>|>=|=|<=|<<)\s*(?P<ver>[^\)]+)\))?/i', $req, $match) ) {
+        if ( preg_match('/(?P<name>[a-z][a-z0-9\-\.\+]+)(\s*\((?P<op>>>|>=|=|<=|<<)\s*(?P<ver>[^\)]+)\))?/i', $req, $match) ) {
             $this->_name = $match['name'];
             if ( isset($match['op']) ) {
                 if ( $match['op'] == '>>' || $match['op'] == '<<' ) {
