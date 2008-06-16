@@ -17,17 +17,17 @@
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
- * @package Lunette_Package
+ * @package Lunette_File
  * @version $Id$
  */
 /**
- * @see Lunette_Package_Reader_Delegate
+ * @see Lunette_File_Reader_Delegate
  */
-require_once 'Lunette/Package/Reader/Delegate.php';
+require_once 'Lunette/File/Reader/Delegate.php';
 /**
- * @see Lunette_Package_Writer
+ * @see Lunette_File_Writer
  */
-require_once 'Lunette/Package/Writer.php';
+require_once 'Lunette/File/Writer.php';
 /**
  * Zend_Loader
  */
@@ -38,9 +38,9 @@ require_once 'Zend/Loader.php';
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
- * @package Lunette_Package
+ * @package Lunette_File
  */
-abstract class Lunette_Package_Archive_Abstract extends Lunette_Package_Reader_Delegate implements Iterator
+abstract class Lunette_File_Archive_Abstract extends Lunette_File_Reader_Delegate implements Iterator
 {
     /**
      * @var string
@@ -65,11 +65,11 @@ abstract class Lunette_Package_Archive_Abstract extends Lunette_Package_Reader_D
     /**
      * Extracts all files from the archive
      * 
-     * The path parameter can either be a {@link Lunette_Package_Writer}, a 
+     * The path parameter can either be a {@link Lunette_File_Writer}, a 
      * string path name, or null.  A null path argument will extract files into
      * the current working directory.
      *
-     * @param mixed $path The path or a {@link Lunette_Package_Writer}
+     * @param mixed $path The path or a {@link Lunette_File_Writer}
      */
     public function extract( $path = null )
     {
@@ -81,8 +81,8 @@ abstract class Lunette_Package_Archive_Abstract extends Lunette_Package_Reader_D
      *
      * @param string $filename
      * @return string
-     * @throws Lunette_Package_Archive_Exception if the file was not found
-     * @throws Lunette_Package_Exception if there was a problem writing
+     * @throws Lunette_File_Archive_Exception if the file was not found
+     * @throws Lunette_File_Exception if there was a problem writing
      */
     public function extractFile( $filename )
     {
@@ -92,8 +92,8 @@ abstract class Lunette_Package_Archive_Abstract extends Lunette_Package_Reader_D
             }
         }
         
-        require_once 'Lunette/Package/Archive/Exception.php';
-        throw new Lunette_Package_Archive_Exception('File not in archive: ' . $filename);
+        require_once 'Lunette/File/Archive/Exception.php';
+        throw new Lunette_File_Archive_Exception('File not in archive: ' . $filename);
     }
     
     /**
@@ -102,13 +102,13 @@ abstract class Lunette_Package_Archive_Abstract extends Lunette_Package_Reader_D
      * The list parameter must contain the filenames that should be extracted.
      * Comparison is case sensitive.
      * 
-     * The path parameter can either be a {@link Lunette_Package_Writer}, a 
+     * The path parameter can either be a {@link Lunette_File_Writer}, a 
      * string path name, or null.  A null path argument will extract files into
      * the current working directory.
      *
      * @param array $list An array of filenames to extract
-     * @param mixed $path The path or a {@link Lunette_Package_Writer}
-     * @throws Lunette_Package_Exception if there was a problem writing
+     * @param mixed $path The path or a {@link Lunette_File_Writer}
+     * @throws Lunette_File_Exception if there was a problem writing
      */
     public function extractList( array $list, $path = null )
     {
@@ -214,14 +214,14 @@ abstract class Lunette_Package_Archive_Abstract extends Lunette_Package_Reader_D
      * Gets a reader for the filename specified
      *
      * @param string $filename
-     * @return Lunette_Package_Reader
+     * @return Lunette_File_Reader
      */
     protected function _getFileReader( $filename, $type = 'file' )
     {
-        if ( $filename instanceof Lunette_Package_Reader ) {
+        if ( $filename instanceof Lunette_File_Reader ) {
             return $filename;
         } else {
-            $className = 'Lunette_Package_Reader_' . ucfirst($type);
+            $className = 'Lunette_File_Reader_' . ucfirst($type);
             Zend_Loader::loadClass($className);
             return new $className($filename);
         }
@@ -230,20 +230,20 @@ abstract class Lunette_Package_Archive_Abstract extends Lunette_Package_Reader_D
     /**
      * Gets a writer for the supplied path
      *
-     * The path parameter can be a Lunette_Package_Writer (if so, it will just
+     * The path parameter can be a Lunette_File_Writer (if so, it will just
      * be returned), a string path name, or null.  A null path parameter will
      * create a writer for the current working directory.
      * 
      * @param mixed $path
-     * @return Lunette_Package_Writer
+     * @return Lunette_File_Writer
      */
     protected function _getWriter( $path = null )
     {
         $writer = null;
-        if ( $path instanceof Lunette_Package_Writer ) {
+        if ( $path instanceof Lunette_File_Writer ) {
             $writer = $path;
         } else {
-            $writer = new Lunette_Package_Writer(is_string($path) ? $path : null);
+            $writer = new Lunette_File_Writer(is_string($path) ? $path : null);
         }
         return $writer;
     }

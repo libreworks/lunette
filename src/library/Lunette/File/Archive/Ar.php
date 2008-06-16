@@ -17,22 +17,22 @@
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
- * @package Lunette_Package
+ * @package Lunette_File
  * @version $Id$
  */
 /**
- * @see Lunette_Package_Archive_Abstract
+ * @see Lunette_File_Archive_Abstract
  */
-require_once 'Lunette/Package/Archive/Abstract.php';
+require_once 'Lunette/File/Archive/Abstract.php';
 /**
  * UNIX Ar reader
  *
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
- * @package Lunette_Package
+ * @package Lunette_File
  */
-class Lunette_Package_Archive_Ar extends Lunette_Package_Archive_Abstract
+class Lunette_File_Archive_Ar extends Lunette_File_Archive_Abstract
 {
     /**
      * The number of bytes to the end
@@ -66,8 +66,8 @@ class Lunette_Package_Archive_Ar extends Lunette_Package_Archive_Abstract
     {
         parent::__construct($this->_getFileReader($filename));
         if ($this->_delegate->read(8) != "!<arch>\n") {
-            require_once 'Lunette/Package/Archive/Exception.php';
-            throw new Lunette_Package_Archive_Exception('Invalid archive: ' . $this->_delegate->getFilename());
+            require_once 'Lunette/File/Archive/Exception.php';
+            throw new Lunette_File_Archive_Exception('Invalid archive: ' . $this->_delegate->getFilename());
         }
         $this->next();
     }

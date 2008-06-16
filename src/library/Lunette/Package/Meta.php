@@ -29,17 +29,17 @@ require_once 'Lunette/File/Sandbox.php';
  */
 require_once 'Lunette/Package/Abstract.php';
 /**
- * @see Lunette_Package_Archive_Ar
+ * @see Lunette_File_Archive_Ar
  */
-require_once 'Lunette/Package/Archive/Ar.php';
+require_once 'Lunette/File/Archive/Ar.php';
 /**
- * @see Lunette_Package_Archive_Tar
+ * @see Lunette_File_Archive_Tar
  */
-require_once 'Lunette/Package/Archive/Tar.php';
+require_once 'Lunette/File/Archive/Tar.php';
 /**
- * @see Lunette_Package_Reader_Gz
+ * @see Lunette_File_Reader_Gz
  */
-require_once 'Lunette/Package/Reader/Gz.php';
+require_once 'Lunette/File/Reader/Gz.php';
 /**
  * Package information wrapper
  *
@@ -51,7 +51,7 @@ require_once 'Lunette/Package/Reader/Gz.php';
 class Lunette_Package_Meta extends Lunette_Package_Abstract
 {
     /**
-     * @var Lunette_Package_Archive_Ar
+     * @var Lunette_File_Archive_Ar
      */
     protected $_archive;
     
@@ -64,14 +64,14 @@ class Lunette_Package_Meta extends Lunette_Package_Abstract
      * Creates a new package metadata wrapper
      *
      * The filename parameter can either be the string filename of the archive
-     * or a {@link Lunette_Package_Archive_Ar} object.
+     * or a {@link Lunette_File_Archive_Ar} object.
      * 
-     * @param mixed $filename String filename or {@link Lunette_Package_Archive_Ar}
+     * @param mixed $filename String filename or {@link Lunette_File_Archive_Ar}
      */
     public function __construct( $filename )
     {
-        $this->_archive = $filename instanceof Lunette_Package_Archive_Ar ? 
-            $filename : new Lunette_Package_Archive_Ar($filename);
+        $this->_archive = $filename instanceof Lunette_File_Archive_Ar ? 
+            $filename : new Lunette_File_Archive_Ar($filename);
             
         $this->_sandbox = new Lunette_File_Sandbox('Lunette_Package');
         $realpath = $this->_sandbox->getRealpath();
@@ -79,7 +79,7 @@ class Lunette_Package_Meta extends Lunette_Package_Abstract
         // extract and process the control information
         $this->_archive->extractList(array('control.tar.gz'), $realpath);
         $controlFilename = $realpath . DIRECTORY_SEPARATOR . 'control.tar.gz';
-        $control = new Lunette_Package_Archive_Tar(new Lunette_Package_Reader_Gz($controlFilename));
+        $control = new Lunette_File_Archive_Tar(new Lunette_File_Reader_Gz($controlFilename));
         $this->_process($control->extractFile('control'));
         $control = null;
     }

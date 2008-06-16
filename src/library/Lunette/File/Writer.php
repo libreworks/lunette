@@ -17,7 +17,7 @@
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
- * @package Lunette_Package
+ * @package Lunette_File
  * @version $Id$
  */
 /**
@@ -26,9 +26,9 @@
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
- * @package Lunette_Package
+ * @package Lunette_File
  */
-class Lunette_Package_Writer
+class Lunette_File_Writer
 {
     /**
      * @var string
@@ -78,13 +78,13 @@ class Lunette_Package_Writer
     public function getWriteStream( $filename )
     {
         if ( is_dir($filename) ) {
-            require_once 'Lunette/Package/Exception.php';
-            throw new Lunette_Package_Exception('File already exists as a directory: ' . $filename);
+            require_once 'Lunette/File/Exception.php';
+            throw new Lunette_File_Exception('File already exists as a directory: ' . $filename);
         }
         $file = @fopen($filename, 'wb');
         if ($file === false) {
-            require_once 'Lunette/Package/Exception.php';
-            throw new Lunette_Package_Exception('Cannot write to file: ' . $filename);
+            require_once 'Lunette/File/Exception.php';
+            throw new Lunette_File_Exception('Cannot write to file: ' . $filename);
         }
         return $file;
     }
@@ -93,7 +93,7 @@ class Lunette_Package_Writer
      * Creates a directory in relation to the writer base
      *
      * @param string $directory The relative directory name
-     * @throws Lunette_Package_Exception if there was a problem creating it
+     * @throws Lunette_File_Exception if there was a problem creating it
      */
     public function mkdir( $name )
     {
@@ -112,7 +112,7 @@ class Lunette_Package_Writer
      * @param string $data
      * @param string $filename
      * @param array $stat
-     * @throws Lunette_Package_Exception if there was a problem writing
+     * @throws Lunette_File_Exception if there was a problem writing
      */
     public function write($data, $filename, array $stat = array())
     {
@@ -123,8 +123,8 @@ class Lunette_Package_Writer
         
         $stream = $this->getWriteStream($proper);
         if (!@fwrite($stream, $data)) {
-            require_once 'Lunette/Package/Exception.php';
-            throw new Lunette_Package_Exception('Could not write to: ' . $proper);
+            require_once 'Lunette/File/Exception.php';
+            throw new Lunette_File_Exception('Could not write to: ' . $proper);
         }
         @fclose($stream);
         
@@ -135,8 +135,8 @@ class Lunette_Package_Writer
             @chmod($proper, $stat['mode']);
         }
         if (isset($stat['size']) && filesize($proper) != $stat['size']) {
-            require_once 'Lunette/Package/Exception.php';
-            throw new Lunette_Package_Exception('Extracted file ' . $proper .
+            require_once 'Lunette/File/Exception.php';
+            throw new Lunette_File_Exception('Extracted file ' . $proper .
                 ' has ' . filesize($proper) . ' bytes but ' . $stat['size'] .
                 ' was expected)');
         }
@@ -146,7 +146,7 @@ class Lunette_Package_Writer
      * Creates a directory
      *
      * @param string $directory The directory name
-     * @throws Lunette_Package_Exception if there was a problem creating it
+     * @throws Lunette_File_Exception if there was a problem creating it
      */
     protected function _mkdir($directory)
     {
@@ -157,8 +157,8 @@ class Lunette_Package_Writer
             $directory = substr($directory, 0, -1);
         }
         if (@file_exists($directory) && !@is_dir($directory)) {
-            require_once 'Lunette/Package/Exception.php';
-            throw new Lunette_Package_Exception('Directory already exists as a file: ' . $directory);
+            require_once 'Lunette/File/Exception.php';
+            throw new Lunette_File_Exception('Directory already exists as a file: ' . $directory);
         }
 
         $parentDir = dirname($directory);
@@ -167,8 +167,8 @@ class Lunette_Package_Writer
         }
 
         if (!@mkdir($directory, 0777)) {
-            require_once 'Lunette/Package/Exception.php';
-            throw new Lunette_Package_Exception("Unable to create directory: " . $directory);
+            require_once 'Lunette/File/Exception.php';
+            throw new Lunette_File_Exception("Unable to create directory: " . $directory);
         }        
     }    
 }

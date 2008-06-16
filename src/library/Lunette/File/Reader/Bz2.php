@@ -17,34 +17,34 @@
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
- * @package Lunette_Package
+ * @package Lunette_File
  * @version $Id$
  */
 /**
- * @see Lunette_Package_Reader_File
+ * @see Lunette_File_Reader_File
  */
-require_once 'Lunette/Package/Reader/File.php';
+require_once 'Lunette/File/Reader/File.php';
 /**
  * Bzip2-encoded file reader
  *
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
- * @package Lunette_Package
+ * @package Lunette_File
  */
-class Lunette_Package_Reader_Bz2 extends Lunette_Package_Reader_File
+class Lunette_File_Reader_Bz2 extends Lunette_File_Reader_File
 {
     /**
      * Creates a new Bzip2 file reader
      *
      * @param string $name  The name of the bzip2 file to read
-     * @throws Lunette_Package_Reader_Exception if the bz2 extension isn't loaded
+     * @throws Lunette_File_Reader_Exception if the bz2 extension isn't loaded
      */
     public function __construct($filename)
     {
         if ( !extension_loaded('bz2') ) {
-            require_once 'Lunette/Package/Reader/Exception.php';
-            throw new Lunette_Package_Reader_Exception('Bz2 extension must be enabled to read Bzip2 files');
+            require_once 'Lunette/File/Reader/Exception.php';
+            throw new Lunette_File_Reader_Exception('Bz2 extension must be enabled to read Bzip2 files');
         }
         parent::__construct($filename);
     }

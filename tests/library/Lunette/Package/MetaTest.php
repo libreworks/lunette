@@ -64,7 +64,7 @@ class Lunette_Package_MetaTest extends PHPUnit_Framework_TestCase
         Xyster_Orm_Loader::addPath(dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/src/application/orm');
         Xyster_Orm::getInstance()->setup('LunettePackage');
         
-        $this->object = new Lunette_Package_Meta(dirname(__FILE__) . '/Archive/_files/unittest-1.0-all.deb');
+        $this->object = new Lunette_Package_Meta(dirname(dirname(__FILE__)) . '/File/Archive/_files/unittest-1.0-all.deb');
     }
 
     /**

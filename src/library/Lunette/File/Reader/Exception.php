@@ -17,21 +17,21 @@
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
- * @package Lunette_Package
+ * @package Lunette_File
  * @version $Id$
  */
 /**
- * @see Lunette_Package_Exception
+ * @see Lunette_File_Exception
  */
-require_once 'Lunette/Package/Exception.php';
+require_once 'Lunette/File/Exception.php';
 /**
  * Reader exception
  *
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
- * @package Lunette_Package
+ * @package Lunette_File
  */
-class Lunette_Package_Reader_Exception extends Lunette_Package_Exception
+class Lunette_File_Reader_Exception extends Lunette_File_Exception
 {
 }

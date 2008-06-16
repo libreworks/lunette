@@ -17,13 +17,13 @@
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
- * @package Lunette_Package
+ * @package Lunette_File
  * @subpackage Tests
  * @version $Id$
  */
-// Call Lunette_Package_Archive_TarTest::main() if this source file is executed directly.
+// Call Lunette_File_Archive_TarTest::main() if this source file is executed directly.
 if (!defined('PHPUnit_MAIN_METHOD')) {
-    define('PHPUnit_MAIN_METHOD', 'Lunette_Package_Archive_TarTest::main');
+    define('PHPUnit_MAIN_METHOD', 'Lunette_File_Archive_TarTest::main');
 }
 require_once dirname(dirname(dirname(dirname(dirname(__FILE__))))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
 require_once 'Lunette/File/Sandbox.php';
@@ -31,7 +31,7 @@ require_once 'Lunette/File/Sandbox.php';
 /**
  * Base class for all archive tests
  */
-class Lunette_Package_Archive_TestCommon extends PHPUnit_Framework_TestCase
+class Lunette_File_Archive_TestCommon extends PHPUnit_Framework_TestCase
 {
     /**
      * @var Lunette_File_Sandbox

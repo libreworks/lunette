@@ -17,7 +17,7 @@
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
- * @package Lunette_Package
+ * @package Lunette_File
  * @version $Id$
  */
 /**
@@ -26,9 +26,9 @@
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
- * @package Lunette_Package
+ * @package Lunette_File
  */
-abstract class Lunette_Package_Reader
+abstract class Lunette_File_Reader
 {
     /**
      * @var string
@@ -104,15 +104,15 @@ abstract class Lunette_Package_Reader
      * Opens and returns a stream resource for reading
      *
      * @return resource
-     * @throws Lunette_Package_Reader_Exception if an error occurs
+     * @throws Lunette_File_Reader_Exception if an error occurs
      */
     protected function _open()
     {
         if ( $this->_stream === null ) {
             $this->_stream = $this->_fopen($this->_filename, 'rb');
             if ($this->_stream === false) {
-                require_once 'Lunette/Package/Reader/Exception.php';
-                throw new Lunette_Package_Reader_Exception('Cannot read file: ' . $this->_filename);
+                require_once 'Lunette/File/Reader/Exception.php';
+                throw new Lunette_File_Reader_Exception('Cannot read file: ' . $this->_filename);
             }
         }
         return $this->_stream;

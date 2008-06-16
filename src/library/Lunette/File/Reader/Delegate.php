@@ -17,34 +17,34 @@
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
- * @package Lunette_Package
+ * @package Lunette_File
  * @version $Id$
  */
 /**
- * @see Lunette_Package_Reader
+ * @see Lunette_File_Reader
  */
-require_once 'Lunette/Package/Reader.php';
+require_once 'Lunette/File/Reader.php';
 /**
  * Abstract reader with a delegate behind it
  *
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
- * @package Lunette_Package
+ * @package Lunette_File
  */
-abstract class Lunette_Package_Reader_Delegate extends Lunette_Package_Reader
+abstract class Lunette_File_Reader_Delegate extends Lunette_File_Reader
 {
     /**
-     * @var Lunette_Package_Reader
+     * @var Lunette_File_Reader
      */
     protected $_delegate;
     
     /**
      * Creates a new delegate reader
      *
-     * @param Lunette_Package_Reader $delegate
+     * @param Lunette_File_Reader $delegate
      */
-    public function __construct( Lunette_Package_Reader $delegate )
+    public function __construct( Lunette_File_Reader $delegate )
     {
         $this->_delegate = $delegate;
     }
@@ -52,7 +52,7 @@ abstract class Lunette_Package_Reader_Delegate extends Lunette_Package_Reader
     /**
      * Gets the delegate reader
      *
-     * @return Lunette_Package_Delegate
+     * @return Lunette_File_Delegate
      */
     public function getDelegate()
     {
