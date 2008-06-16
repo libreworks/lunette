@@ -29,6 +29,10 @@ require_once 'Lunette/Package/Relation/Interface.php';
  */
 require_once 'Xyster/Collection/Set.php';
 /**
+ * @see Lunette_Package_Relation
+ */
+require_once 'Lunette/Package/Relation.php';
+/**
  * Package relation information set
  *
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
@@ -119,6 +123,46 @@ class Lunette_Package_Relation_Set extends Xyster_Collection_Set implements Lune
         $set->add($left);
         $set->add($right);
         $set->_operator = 'OR';
+        return $set;
+    }
+    
+    /**
+     * Parses a dependency string
+     * 
+     * @param Lunette_Package_Interface $parent The parent package
+     * @param Lunette_Package_RelationType $type The type of relation
+     * @param string $string The depends string
+     * @return Lunette_Package_Relation_Set
+     */
+    public static function parse( Lunette_Package_Interface $parent, Lunette_Package_RelationType $type, $string )
+    {
+        $depends = preg_split('/,\s*/', $string);
+        $set = new self;
+        foreach( $depends as $depend ) {
+            $relation = ( strpos($depend, '|') !== false ) ?
+                self::_parseOr($parent, $type, $depend) : 
+                new Lunette_Package_Relation($parent, $depend, $type);
+            $set->add($relation);
+        }
+        return $set;
+    }
+    
+    /**
+     * Parses a dependency string for OR syntax
+     * 
+     * @param Lunette_Package_Interface $parent The parent package
+     * @param Lunette_Package_RelationType $type The type of relation
+     * @param string $string The depends string
+     * @return Lunette_Package_Relation_Set
+     */
+    protected static function _parseOr( Lunette_Package_Interface $parent, Lunette_Package_RelationType $type, $string )
+    {
+        $depends = preg_split('/\s*\|\s*/', $string);
+        $set = new self();
+        $set->_operator = 'OR';
+        foreach( $depends as $depend ) {
+            $set->add(new Lunette_Package_Relation($parent, $depend, $type));
+        }
         return $set;
     }
 }

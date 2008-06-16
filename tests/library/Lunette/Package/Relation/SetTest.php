@@ -124,6 +124,25 @@ class Lunette_Package_Relation_SetTest extends PHPUnit_Framework_TestCase
         $svc = new Lunette_Package_SetTest_Svc(Xyster_Orm::getInstance());
         $this->assertFalse($this->object->isSatisfied($svc));
     }
+    
+    /**
+     * Tests the 'parse' method
+     */
+    public function testParse()
+    {
+        $string = 'test-package, lunette-core (>> 2.2.1), base-editor | thing-editor (<= 3.0.0) | my-editor | awesome-editor';
+        $parent = $this->getMock('Lunette_Package_Interface');
+        $type = Lunette_Package_RelationType::Depends();
+        
+        $set = Lunette_Package_Relation_Set::parse($parent, $type, $string);
+        $this->assertEquals(3, count($set));
+        $array = $set->toArray();
+        $this->assertType('Lunette_Package_Relation', $array[0]);
+        $this->assertType('Lunette_Package_Relation', $array[1]);
+        $this->assertType('Lunette_Package_Relation_Set', $array[2]);
+        $this->assertEquals('OR', $array[2]->getOperator());
+        $this->assertEquals(4, count($array[2]));
+    }
 }
 
 class Lunette_Package_SetTest_Svc extends Lunette_Package_Service

@@ -44,7 +44,7 @@ interface Lunette_Package_Interface
      * Gets the packages of a certain relation type
      *
      * @param Lunette_Package_RelationType $type The relationship type
-     * @return array containing {@link Lunette_Package_Relation} objects
+     * @return Lunette_Package_Relation_Set
      */
     function getRelations( Lunette_Package_RelationType $type );
 
