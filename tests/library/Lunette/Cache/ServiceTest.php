@@ -67,6 +67,8 @@ class Lunette_Cache_ServiceTest extends PHPUnit_Framework_TestCase
     {
         $db = new Lunette_TestDbSetup;
         $db->getDbAdapter()->query('DELETE FROM lunette_cache');
+        Xyster_Orm::getInstance()->clear();
+        $this->sharedFixture = Xyster_Orm::getInstance();
     }
     
     /**

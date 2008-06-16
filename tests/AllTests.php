@@ -26,6 +26,7 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
 }
 
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'TestHelper.php';
+require_once 'Lunette/AllTests.php';
 
 /**
  * Class to run all unit tests
@@ -59,6 +60,7 @@ class AllTests
     public static function suite()
     {
         $suite = new PHPUnit_Framework_TestSuite('Lunette Platform');
+        $suite->addTest( Lunette_AllTests::suite() );
         return $suite;
     }
 }

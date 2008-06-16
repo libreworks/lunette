@@ -17,24 +17,26 @@
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
- * @package Lunette_Cache
+ * @package Lunette
  * @subpackage Tests
  * @version $Id$
  */
 if (!defined('PHPUnit_MAIN_METHOD')) {
-    define('PHPUnit_MAIN_METHOD', 'Lunette_Cache_AllTests::main');
+    define('PHPUnit_MAIN_METHOD', 'Lunette_AllTests::main');
 }
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
-require_once 'Lunette/TestDbSetup.php';
-require_once 'Lunette/Cache/ServiceTest.php';
-require_once 'Lunette/Orm/Mapper.php';
-require_once 'Xyster/Orm/Loader.php';
-require_once 'Xyster/Orm.php';
+require_once dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
+require_once 'Lunette/ApplicationTest.php';
+require_once 'Lunette/Cache/AllTests.php';
+require_once 'Lunette/Config/AllTests.php';
+require_once 'Lunette/File/AllTests.php';
+require_once 'Lunette/Package/AllTests.php';
+require_once 'Lunette/VersionTest.php';
+
 /**
- * The suite of tests for Lunette_Cache
+ * The suite of tests for Lunette_Package
  *
  */
-class Lunette_Cache_AllTests extends PHPUnit_Framework_TestSuite
+class Lunette_AllTests extends PHPUnit_Framework_TestSuite
 {
     /**
      * Executes the suite
@@ -51,33 +53,17 @@ class Lunette_Cache_AllTests extends PHPUnit_Framework_TestSuite
      */
     public static function suite()
     {
-        $suite = new self('Lunette Platform - Lunette_Cache');
-        $suite->addTestSuite('Lunette_Cache_ServiceTest');
+        $suite = new self('Lunette Platform - Lunette');
+        $suite->addTestSuite('Lunette_ApplicationTest');
+        $suite->addTest( Lunette_Cache_AllTests::suite() );
+        $suite->addTest( Lunette_Config_AllTests::suite() );
+        $suite->addTest( Lunette_File_AllTests::suite() );
+        $suite->addTest( Lunette_Package_AllTests::suite() );
+        $suite->addTestSuite('Lunette_VersionTest');
         return $suite;
-    }
-    
-    /**
-     * Sets up the test suite
-     */
-    protected function setUp()
-    {
-        $setup = new Lunette_TestDbSetup;
-        $setup->setupCache();
-        Lunette_Orm_Mapper::dsn('lunette', $setup->getDbAdapter());
-        Xyster_Orm_Loader::addPath(dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/src/application/orm');
-    }
-    
-    /**
-     * Tears down the test suite
-     */
-    protected function tearDown()
-    {
-        $setup = new Lunette_TestDbSetup;
-        $setup->tearDownCache();
     }
 }
 
-
-if (PHPUnit_MAIN_METHOD == 'Lunette_Cache_AllTests::main') {
-    Lunette_Cache_AllTests::main();
+if (PHPUnit_MAIN_METHOD == 'Lunette_AllTests::main') {
+    Lunette_AllTests::main();
 }
