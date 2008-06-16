@@ -27,6 +27,7 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
 }
 require_once dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
 require_once 'Lunette/Package/Writer.php';
+require_once 'Lunette/File/Sandbox.php';
 
 /**
  * Test class for Lunette_Package_Writer.
@@ -35,9 +36,14 @@ require_once 'Lunette/Package/Writer.php';
 class Lunette_Package_WriterTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var    Lunette_Package_Writer
+     * @var Lunette_Package_Writer
      */
     protected $object;
+    
+    /**
+     * @var Lunette_File_Sandbox
+     */
+    protected $sandbox;
     
     /**
      * Runs the test methods of this class.
@@ -54,7 +60,8 @@ class Lunette_Package_WriterTest extends PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->object = new Lunette_Package_Writer($this->_getSandboxName());
+        $this->sandbox = new Lunette_File_Sandbox('WriterTest');
+        $this->object = new Lunette_Package_Writer($this->sandbox->getRealpath());
     }
 
     /**
@@ -62,7 +69,7 @@ class Lunette_Package_WriterTest extends PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        $this->_cleanup();
+        $this->sandbox = null;
     }
 
     /**
@@ -89,7 +96,6 @@ class Lunette_Package_WriterTest extends PHPUnit_Framework_TestCase
      */
     public function testGetWriteStream()
     {
-        $this->_createSandbox();
         $filename = $this->_getSandboxName() . '/test.txt';
         $stream = $this->object->getWriteStream($filename);
         $this->assertTrue(is_resource($stream));
@@ -100,7 +106,6 @@ class Lunette_Package_WriterTest extends PHPUnit_Framework_TestCase
      */
     public function testGetWriteStreamDirectory()
     {
-        $this->_createSandbox();
         $directory = $this->_getSandboxName() . '/mydir';
         mkdir($directory);
         $this->setExpectedException('Lunette_Package_Exception', 'File already exists as a directory: ' . $directory);
@@ -112,7 +117,6 @@ class Lunette_Package_WriterTest extends PHPUnit_Framework_TestCase
      */
     public function testGetWriteStreamInvalid()
     {
-        $this->_createSandbox();
         $filename = $this->_getSandboxName() . '/mydir/anotherdir/test.txt';
         $this->setExpectedException('Lunette_Package_Exception', 'Cannot write to file: ' . $filename);
         $this->object->getWriteStream($filename);
@@ -123,7 +127,6 @@ class Lunette_Package_WriterTest extends PHPUnit_Framework_TestCase
      */
     public function testMkdir()
     {
-        $this->_createSandbox();
         $dirname = $this->_getSandboxName() . '/mytestdir';
         $this->assertFileNotExists($dirname);
         $this->object->mkdir('/mytestdir/');
@@ -135,7 +138,6 @@ class Lunette_Package_WriterTest extends PHPUnit_Framework_TestCase
      */
     public function testMkdirExists()
     {
-        $this->_createSandbox();
         $dirname = $this->_getSandboxName() . '/mytestdir';
         file_put_contents($dirname, 'abc123');
         $this->setExpectedException('Lunette_Package_Exception', 'Directory already exists as a file: ' . $dirname);
@@ -150,7 +152,6 @@ class Lunette_Package_WriterTest extends PHPUnit_Framework_TestCase
         $data = file_get_contents(dirname(__FILE__) . '/_files/alicecp1.txt');
         $filename = 'dir1/dir2/alice.txt';
         $stat = array('mtime' => strtotime('-1 month'), 'mode' => 0755, 'size' => strlen($data));
-        $this->_createSandbox();
         $realname = $this->_getSandboxName() . '/' . $filename;
         $this->assertFileNotExists($realname);
         $this->object->write($data, $filename, $stat);
@@ -168,43 +169,9 @@ class Lunette_Package_WriterTest extends PHPUnit_Framework_TestCase
         $data = file_get_contents(dirname(__FILE__) . '/_files/alicecp1.txt');
         $filename = 'alice.txt';
         $stat = array('mtime' => strtotime('-1 month'), 'mode' => 0755, 'size' => strlen($data)-1);
-        $this->_createSandbox();
         $realname = $this->_getSandboxName() . '/' . $filename;
         $this->setExpectedException('Lunette_Package_Exception');
         $this->object->write($data, $filename, $stat);
-    }
-    
-    /**
-     * Creates a sandbox
-     */
-    protected function _createSandbox()
-    {
-        mkdir($this->_getSandboxName(), 0777);
-    }
-    
-    /**
-     * Cleans up the directory.
-     *
-     * @param string $dir
-     */
-    protected function _cleanup( $dir = null )
-    {
-        if ( $dir === null ) {
-            $dir = $this->_getSandboxName();
-        }
-        if ( file_exists($dir) ) {
-            $directory = new DirectoryIterator($dir);
-            foreach( $directory as $v ) {
-                if ( !$directory->isDot() ) {
-                    if ( $directory->isDir() ) {
-                        $this->_cleanup($directory->getRealPath());
-                    } else {
-                        unlink($directory->getRealPath());
-                    }
-                }
-            }
-            rmdir($dir);
-        }
     }
     
     /**
@@ -214,7 +181,7 @@ class Lunette_Package_WriterTest extends PHPUnit_Framework_TestCase
      */
     protected function _getSandboxName()
     {
-        return sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'WriterTest';
+        return $this->sandbox->getRealpath();
     }
 }
 

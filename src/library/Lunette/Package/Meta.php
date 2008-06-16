@@ -21,6 +21,10 @@
  * @version $Id$
  */
 /**
+ * @see Lunette_File_Sandbox
+ */
+require_once 'Lunette/File/Sandbox.php';
+/**
  * @see Lunette_Package_Abstract
  */
 require_once 'Lunette/Package/Abstract.php';
@@ -50,7 +54,12 @@ class Lunette_Package_Meta extends Lunette_Package_Abstract
      * @var Lunette_Package_Archive_Ar
      */
     protected $_archive;
-        
+    
+    /**
+     * @var Lunette_File_Sandbox
+     */
+    protected $_sandbox;
+
     /**
      * Creates a new package metadata wrapper
      *
@@ -63,16 +72,13 @@ class Lunette_Package_Meta extends Lunette_Package_Abstract
     {
         $this->_archive = $filename instanceof Lunette_Package_Archive_Ar ? 
             $filename : new Lunette_Package_Archive_Ar($filename);
-        
-        // create the sandbox
-        if (!@mkdir($this->_getSandboxName(), 0777)) {
-            require_once 'Lunette/Package/Exception.php';
-            throw new Lunette_Package_Exception('Could not create the sandbox directory');
-        }
+            
+        $this->_sandbox = new Lunette_File_Sandbox('Lunette_Package');
+        $realpath = $this->_sandbox->getRealpath();
         
         // extract and process the control information
-        $this->_archive->extractList(array('control.tar.gz'), $this->_getSandboxName());
-        $controlFilename = $this->_getSandboxName() . DIRECTORY_SEPARATOR . 'control.tar.gz';
+        $this->_archive->extractList(array('control.tar.gz'), $realpath);
+        $controlFilename = $realpath . DIRECTORY_SEPARATOR . 'control.tar.gz';
         $control = new Lunette_Package_Archive_Tar(new Lunette_Package_Reader_Gz($controlFilename));
         $this->_process($control->extractFile('control'));
         $control = null;
@@ -84,7 +90,7 @@ class Lunette_Package_Meta extends Lunette_Package_Abstract
     public function __destruct()
     {
         $this->_archive = null;
-        $this->_cleanup();
+        $this->_sandbox = null;
     }
     
     /**
@@ -101,41 +107,6 @@ class Lunette_Package_Meta extends Lunette_Package_Abstract
             $this->_state = Xyster_Enum::valueOf('Lunette_Package_State', $state);
         }
         return $this->_state;
-    }
-    
-    /**
-     * Cleans up the directory
-     *
-     * @param string $dir
-     */
-    protected function _cleanup( $dir = null )
-    {
-        if ( $dir === null ) {
-            $dir = $this->_getSandboxName();
-        }
-        if ( file_exists($dir) ) {
-            $directory = new DirectoryIterator($dir);
-            foreach( $directory as $v ) {
-                if ( !$directory->isDot() ) {
-                    if ( $directory->isDir() ) {
-                        $this->_cleanup($directory->getRealPath());
-                    } else {
-                        unlink($directory->getRealPath());
-                    }
-                }
-            }
-            rmdir($dir);
-        }
-    }
-    
-    /**
-     * Gets the sandbox name
-     *
-     * @return string
-     */
-    protected function _getSandboxName()
-    {
-        return sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'Lunette_Package';
     }
     
     /**

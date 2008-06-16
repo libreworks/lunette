@@ -26,12 +26,26 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Lunette_Package_Archive_TarTest::main');
 }
 require_once dirname(dirname(dirname(dirname(dirname(__FILE__))))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
+require_once 'Lunette/File/Sandbox.php';
 
 /**
  * Base class for all archive tests
  */
 class Lunette_Package_Archive_TestCommon extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Lunette_File_Sandbox
+     */
+    protected $sandbox;
+
+    /**
+     * Tears down the fixture
+     */
+    protected function tearDown()
+    {
+        unset($this->sandbox);
+    }
+        
     /**
      * Tests the 'getFileContents' method
      */
@@ -62,32 +76,8 @@ class Lunette_Package_Archive_TestCommon extends PHPUnit_Framework_TestCase
      */
     protected function _createSandbox()
     {
-        mkdir($this->_getSandboxName(), 0777);
-    }
-    
-    /**
-     * Cleans up the directory.
-     *
-     * @param string $dir
-     */
-    protected function _cleanup( $dir = null )
-    {
-        if ( $dir === null ) {
-            $dir = $this->_getSandboxName();
-        }
-        if ( file_exists($dir) ) {
-            $directory = new DirectoryIterator($dir);
-            foreach( $directory as $v ) {
-                if ( !$directory->isDot() ) {
-                    if ( $directory->isDir() ) {
-                        $this->_cleanup($directory->getRealPath());
-                    } else {
-                        unlink($directory->getRealPath());
-                    }
-                }
-            }
-            rmdir($dir);
-        }
+        $this->sandbox = null;
+        $this->sandbox = new Lunette_File_Sandbox('ArchiveTest');
     }
     
     /**

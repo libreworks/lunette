@@ -63,6 +63,7 @@ class Lunette_Package_Archive_ArTest extends Lunette_Package_Archive_TestCommon
     protected function tearDown()
     {
         $this->object = null;
+        parent::tearDown();
     }
 
     /**

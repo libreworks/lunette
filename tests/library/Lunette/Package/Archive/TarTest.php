@@ -128,7 +128,7 @@ class Lunette_Package_Archive_TarTest extends Lunette_Package_Archive_TestCommon
     protected function tearDown()
     {
         $this->object = null;
-        $this->_cleanup();
+        parent::tearDown();
     }
 
     /**
@@ -169,6 +169,7 @@ class Lunette_Package_Archive_TarTest extends Lunette_Package_Archive_TestCommon
      */
     public function testExtractList()
     {
+        $this->_createSandbox();
         $list = array('LunetteTest/Bar/Abc/example3.txt',
             'LunetteTest/Bar/Abc/example4.txt');
         $sandbox = $this->_getSandboxName();
