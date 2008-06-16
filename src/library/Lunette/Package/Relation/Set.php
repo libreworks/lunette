@@ -130,11 +130,11 @@ class Lunette_Package_Relation_Set extends Xyster_Collection_Set implements Lune
      * Parses a dependency string
      * 
      * @param Lunette_Package_Interface $parent The parent package
-     * @param Lunette_Package_RelationType $type The type of relation
+     * @param Lunette_Package_Relation_Type $type The type of relation
      * @param string $string The depends string
      * @return Lunette_Package_Relation_Set
      */
-    public static function parse( Lunette_Package_Interface $parent, Lunette_Package_RelationType $type, $string )
+    public static function parse( Lunette_Package_Interface $parent, Lunette_Package_Relation_Type $type, $string )
     {
         $depends = preg_split('/,\s*/', $string);
         $set = new self;
@@ -151,11 +151,11 @@ class Lunette_Package_Relation_Set extends Xyster_Collection_Set implements Lune
      * Parses a dependency string for OR syntax
      * 
      * @param Lunette_Package_Interface $parent The parent package
-     * @param Lunette_Package_RelationType $type The type of relation
+     * @param Lunette_Package_Relation_Type $type The type of relation
      * @param string $string The depends string
      * @return Lunette_Package_Relation_Set
      */
-    protected static function _parseOr( Lunette_Package_Interface $parent, Lunette_Package_RelationType $type, $string )
+    protected static function _parseOr( Lunette_Package_Interface $parent, Lunette_Package_Relation_Type $type, $string )
     {
         $depends = preg_split('/\s*\|\s*/', $string);
         $set = new self();

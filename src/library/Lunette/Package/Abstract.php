@@ -112,10 +112,10 @@ abstract class Lunette_Package_Abstract implements Lunette_Package_Interface
     /**
      * Gets the packages of a certain relation type
      *
-     * @param Lunette_Package_RelationType $type The relationship type
+     * @param Lunette_Package_Relation_Type $type The relationship type
      * @return Lunette_Package_Relation_Set
      */
-    public function getRelations( Lunette_Package_RelationType $type )
+    public function getRelations( Lunette_Package_Relation_Type $type )
     {
         $name = strtolower($type->getName());
         if ( $this->_relations[$name] === null ) {

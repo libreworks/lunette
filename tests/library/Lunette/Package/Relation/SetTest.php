@@ -28,7 +28,7 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
 require_once dirname(dirname(dirname(dirname(dirname(__FILE__))))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
 require_once 'Lunette/Package/Relation/Set.php';
 require_once 'Lunette/Package/Relation.php';
-require_once 'Lunette/Package/RelationType.php';
+require_once 'Lunette/Package/Relation/Type.php';
 require_once 'Lunette/Package/Service.php';
 require_once 'Xyster/Orm.php';
 
@@ -67,8 +67,8 @@ class Lunette_Package_Relation_SetTest extends PHPUnit_Framework_TestCase
     public function testAny()
     {
         $parent = $this->getMock('Lunette_Package_Interface');
-        $mock = new Lunette_Package_Relation($parent, 'test-package-new', Lunette_Package_RelationType::Depends());
-        $mock2 = new Lunette_Package_Relation($parent, 'test-package-old', Lunette_Package_RelationType::Depends());
+        $mock = new Lunette_Package_Relation($parent, 'test-package-new', Lunette_Package_Relation_Type::Depends());
+        $mock2 = new Lunette_Package_Relation($parent, 'test-package-old', Lunette_Package_Relation_Type::Depends());
         $set = Lunette_Package_Relation_Set::any($mock, $mock2);
         
         $this->assertEquals('OR', $set->getOperator());
@@ -103,8 +103,8 @@ class Lunette_Package_Relation_SetTest extends PHPUnit_Framework_TestCase
     public function testIsSatisfied()
     {
         $parent = $this->getMock('Lunette_Package_Interface');
-        $mock = new Lunette_Package_Relation($parent, 'test-package-old', Lunette_Package_RelationType::Depends());
-        $mock2 = new Lunette_Package_Relation($parent, 'test-package-old (>= 2.2.0)', Lunette_Package_RelationType::Depends());
+        $mock = new Lunette_Package_Relation($parent, 'test-package-old', Lunette_Package_Relation_Type::Depends());
+        $mock2 = new Lunette_Package_Relation($parent, 'test-package-old (>= 2.2.0)', Lunette_Package_Relation_Type::Depends());
         $this->object->add($mock);
         $this->object->add($mock2);
         $svc = new Lunette_Package_SetTest_Svc(Xyster_Orm::getInstance());
@@ -117,8 +117,8 @@ class Lunette_Package_Relation_SetTest extends PHPUnit_Framework_TestCase
     public function testNotSatisfied()
     {
         $parent = $this->getMock('Lunette_Package_Interface');
-        $mock = new Lunette_Package_Relation($parent, 'test-package-new', Lunette_Package_RelationType::Depends());
-        $mock2 = new Lunette_Package_Relation($parent, 'test-package-new (>= 3.2.0)', Lunette_Package_RelationType::Depends());
+        $mock = new Lunette_Package_Relation($parent, 'test-package-new', Lunette_Package_Relation_Type::Depends());
+        $mock2 = new Lunette_Package_Relation($parent, 'test-package-new (>= 3.2.0)', Lunette_Package_Relation_Type::Depends());
         $this->object->add($mock);
         $this->object->add($mock2);
         $svc = new Lunette_Package_SetTest_Svc(Xyster_Orm::getInstance());
@@ -132,7 +132,7 @@ class Lunette_Package_Relation_SetTest extends PHPUnit_Framework_TestCase
     {
         $string = 'test-package, lunette-core (>> 2.2.1), base-editor | thing-editor (<= 3.0.0) | my-editor | awesome-editor';
         $parent = $this->getMock('Lunette_Package_Interface');
-        $type = Lunette_Package_RelationType::Depends();
+        $type = Lunette_Package_Relation_Type::Depends();
         
         $set = Lunette_Package_Relation_Set::parse($parent, $type, $string);
         $this->assertEquals(3, count($set));

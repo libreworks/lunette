@@ -28,7 +28,7 @@ require_once dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR 
 require_once 'Lunette/Package/CachedTest.php';
 require_once 'Lunette/Package/MetaTest.php';
 require_once 'Lunette/Package/RelationTest.php';
-require_once 'Lunette/Package/RelationTypeTest.php';
+require_once 'Lunette/Package/Relation/TypeTest.php';
 require_once 'Lunette/Package/Relation/SetTest.php';
 require_once 'Lunette/Package/StateTest.php';
 
@@ -57,7 +57,7 @@ class Lunette_Package_AllTests extends PHPUnit_Framework_TestSuite
         $suite->addTestSuite('Lunette_Package_CachedTest');
         $suite->addTestSuite('Lunette_Package_MetaTest');
         $suite->addTestSuite('Lunette_Package_RelationTest');
-        $suite->addTestSuite('Lunette_Package_RelationTypeTest');
+        $suite->addTestSuite('Lunette_Package_Relation_TypeTest');
         $suite->addTestSuite('Lunette_Package_Relation_SetTest');
         $suite->addTestSuite('Lunette_Package_StateTest');
         return $suite;

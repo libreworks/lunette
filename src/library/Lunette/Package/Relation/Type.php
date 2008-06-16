@@ -32,7 +32,7 @@ require_once 'Xyster/Enum.php';
  * @category Lunette
  * @package Lunette_Package
  */
-class Lunette_Package_RelationType extends Xyster_Enum
+class Lunette_Package_Relation_Type extends Xyster_Enum
 {
     const Depends = 0;
     const Suggests = 1;
@@ -45,7 +45,7 @@ class Lunette_Package_RelationType extends Xyster_Enum
     /**
      * For when a package depends on another package
      *
-     * @return Lunette_Package_RelationType
+     * @return Lunette_Package_Relation_Type
      */
     static public function Depends()
     {
@@ -55,7 +55,7 @@ class Lunette_Package_RelationType extends Xyster_Enum
     /**
      * When another package could prove useful (opposite of enhances)
      *
-     * @return Lunette_Package_RelationType
+     * @return Lunette_Package_Relation_Type
      */
     static public function Suggests()
     {
@@ -65,7 +65,7 @@ class Lunette_Package_RelationType extends Xyster_Enum
     /**
      * When a package is strongly recommended
      *
-     * @return Lunette_Package_RelationType
+     * @return Lunette_Package_Relation_Type
      */
     static public function Recommends()
     {
@@ -75,7 +75,7 @@ class Lunette_Package_RelationType extends Xyster_Enum
     /**
      * When a package conflicts with another one
      *
-     * @return Lunette_Package_RelationType
+     * @return Lunette_Package_Relation_Type
      */
     static public function Conflicts()
     {
@@ -85,7 +85,7 @@ class Lunette_Package_RelationType extends Xyster_Enum
     /**
      * When a package replaces another one
      *
-     * @return Lunette_Package_RelationType
+     * @return Lunette_Package_Relation_Type
      */
     static public function Replaces()
     {
@@ -95,7 +95,7 @@ class Lunette_Package_RelationType extends Xyster_Enum
     /**
      * When a package can enhance features of another package
      *
-     * @return Lunette_Package_RelationType
+     * @return Lunette_Package_Relation_Type
      */
     static public function Enhances()
     {
@@ -105,7 +105,7 @@ class Lunette_Package_RelationType extends Xyster_Enum
     /**
      * When a package provides a virtual package
      *
-     * @return Lunette_Package_RelationType
+     * @return Lunette_Package_Relation_Type
      */
     static public function Provides()
     {

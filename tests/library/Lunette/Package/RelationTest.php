@@ -28,7 +28,7 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
 require_once dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
 require_once 'Lunette/Package/Relation.php';
 require_once 'Lunette/Package/Interface.php';
-require_once 'Lunette/Package/RelationType.php';
+require_once 'Lunette/Package/Relation/Type.php';
 require_once 'Lunette/Package/Service.php';
 require_once 'Xyster/Data/Operator/Expression.php';
 require_once 'Xyster/Orm.php';
@@ -72,7 +72,7 @@ class Lunette_Package_RelationTest extends PHPUnit_Framework_TestCase
         $name = 'testpackage';
         $op = Xyster_Data_Operator_Expression::Gte();
         $version = '1.0.2';
-        $type = Lunette_Package_RelationType::Depends();
+        $type = Lunette_Package_Relation_Type::Depends();
         $rel = new Lunette_Package_Relation($parent, $versionFull, $type);
         
         $this->assertSame($parent, $rel->getParent());
@@ -99,7 +99,7 @@ class Lunette_Package_RelationTest extends PHPUnit_Framework_TestCase
         $name = 'testpackage';
         $version = null;
         $op = null;
-        $type = Lunette_Package_RelationType::Replaces();
+        $type = Lunette_Package_Relation_Type::Replaces();
         $rel = new Lunette_Package_Relation($parent, $versionFull, $type);
         
         $this->assertSame($parent, $rel->getParent());

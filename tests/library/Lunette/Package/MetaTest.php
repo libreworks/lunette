@@ -86,7 +86,7 @@ class Lunette_Package_MetaTest extends PHPUnit_Framework_TestCase
     public function testGetRelations()
     {
         foreach( range(0, 6) as $value ) {
-            $type = Xyster_Enum::valueOf('Lunette_Package_RelationType', $value);
+            $type = Xyster_Enum::valueOf('Lunette_Package_Relation_Type', $value);
             $relations = $this->object->getRelations($type);
             $this->assertType('Lunette_Package_Relation_Set', $relations);
             $this->assertSame($relations, $this->object->getRelations($type));

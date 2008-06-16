@@ -107,15 +107,15 @@ class Lunette_Package_CachedTest extends PHPUnit_Framework_TestCase
     public function testGetRelations()
     {
         foreach( range(0, 6) as $value ) {
-            $type = Xyster_Enum::valueOf('Lunette_Package_RelationType', $value);
+            $type = Xyster_Enum::valueOf('Lunette_Package_Relation_Type', $value);
             $relations = $this->object->getRelations($type);
             $this->assertType('Lunette_Package_Relation_Set', $relations);
             $this->assertSame($relations, $this->object->getRelations($type));
-            if ( $type === Lunette_Package_RelationType::Depends() ) {
+            if ( $type === Lunette_Package_Relation_Type::Depends() ) {
                 $this->assertEquals(3, count($relations));
-            } else if ( $type === Lunette_Package_RelationType::Conflicts() ) {
+            } else if ( $type === Lunette_Package_Relation_Type::Conflicts() ) {
                 $this->assertEquals(2, count($relations));
-            } else if ( $type === Lunette_Package_RelationType::Provides() ) {
+            } else if ( $type === Lunette_Package_Relation_Type::Provides() ) {
                 $this->assertEquals(2, count($relations));
             }
         }

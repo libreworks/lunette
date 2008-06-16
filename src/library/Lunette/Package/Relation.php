@@ -21,9 +21,9 @@
  * @version $Id$
  */
 /**
- * @see Lunette_Package_RelationType
+ * @see Lunette_Package_Relation_Type
  */
-require_once 'Lunette/Package/RelationType.php';
+require_once 'Lunette/Package/Relation/Type.php';
 /**
  * @see Lunette_Package_Relation_Interface
  */
@@ -59,7 +59,7 @@ class Lunette_Package_Relation implements Lunette_Package_Relation_Interface
     protected $_version;
     
     /**
-     * @var Lunette_Package_RelationType
+     * @var Lunette_Package_Relation_Type
      */
     protected $_type;
     
@@ -68,9 +68,9 @@ class Lunette_Package_Relation implements Lunette_Package_Relation_Interface
      *
      * @param Lunette_Package_Interface $parent The package with the requirement
      * @param string $requirement The name and version information
-     * @param Lunette_Package_RelationType $type The type of relation
+     * @param Lunette_Package_Relation_Type $type The type of relation
      */
-    public function __construct( Lunette_Package_Interface $parent, $requirement, Lunette_Package_RelationType $type )
+    public function __construct( Lunette_Package_Interface $parent, $requirement, Lunette_Package_Relation_Type $type )
     {
         $this->_parent = $parent;
         $this->_parseRequirement($requirement);
@@ -119,7 +119,7 @@ class Lunette_Package_Relation implements Lunette_Package_Relation_Interface
     /**
      * Gets the relation type
      *
-     * @return Lunette_Package_RelationType
+     * @return Lunette_Package_Relation_Type
      */
     public function getType()
     {
