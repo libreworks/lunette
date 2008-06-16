@@ -30,6 +30,7 @@ require_once 'Lunette/Package/Archive/TarTest.php';
 require_once 'Lunette/Package/Archive/TarBz2Test.php';
 require_once 'Lunette/Package/Archive/TarGzTest.php';
 require_once 'Lunette/Package/CachedTest.php';
+require_once 'Lunette/Package/MetaTest.php';
 require_once 'Lunette/Package/ReaderTest.php';
 require_once 'Lunette/Package/Reader/Bz2Test.php';
 require_once 'Lunette/Package/Reader/DelegateTest.php';
@@ -68,6 +69,7 @@ class Lunette_Package_AllTests extends PHPUnit_Framework_TestSuite
         $suite->addTestSuite('Lunette_Package_Archive_TarBz2Test');
         $suite->addTestSuite('Lunette_Package_Archive_TarGzTest');
         $suite->addTestSuite('Lunette_Package_CachedTest');
+        $suite->addTestSuite('Lunette_Package_MetaTest');
         $suite->addTestSuite('Lunette_Package_ReaderTest');
         $suite->addTestSuite('Lunette_Package_Reader_Bz2Test');
         $suite->addTestSuite('Lunette_Package_Reader_DelegateTest');

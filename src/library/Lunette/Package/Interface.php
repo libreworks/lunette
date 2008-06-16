@@ -51,9 +51,10 @@ interface Lunette_Package_Interface
     /**
      * Gets the current installed state
      *
+     * @param Lunette_Package_Service $service
      * @return Lunette_Package_State
      */
-    function getState();
+    function getState( Lunette_Package_Service $service );
     
     /**
      * Gets the string equivalent of the object

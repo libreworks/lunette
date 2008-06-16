@@ -21,17 +21,9 @@
  * @version $Id$
  */
 /**
- * @see Lunette_Package_Interface
+ * @see Lunette_Package_Abstract
  */
-require_once 'Lunette/Package/Interface.php';
-/**
- * @see Lunette_Package_Relation_Set
- */
-require_once 'Lunette/Package/Relation/Set.php';
-/**
- * @see Lunette_Package_State
- */
-require_once 'Lunette/Package/State.php';
+require_once 'Lunette/Package/Abstract.php';
 /**
  * Package information class
  *
@@ -40,58 +32,12 @@ require_once 'Lunette/Package/State.php';
  * @category Lunette
  * @package Lunette_Package
  */
-class Lunette_Package_Cached implements Lunette_Package_Interface
+class Lunette_Package_Cached extends Lunette_Package_Abstract
 {
     /**
      * @var LunettePackage
      */
-    protected $_package;
-    
-    /**
-     * @var array
-     */
-    protected $_control = array(
-        'maintainer' => null,
-        'uploaders' => null,
-        'changed-by' => null,
-        'section' => null,
-        'priority' => null,
-        'package' => null,
-        'architecture' => null,
-        'essential' => null,
-        'depends' => null,
-        'recommends' => null,
-        'suggests' => null,
-        'conflicts' => null,
-        'provides' => null,
-        'replaces' => null,
-        'enhances' => null,
-        'version' => null,
-        'description' => null,
-        'distribution' => 'lunette',
-        'date' => 0,
-        'format' => 1.5,
-        'urgency' => null,
-        'installed-size' => null
-        );
-    
-    /**
-     * @var Lunette_Package_State
-     */
-    protected $_state;
-    
-    /**
-     * @var array
-     */
-    protected $_relations = array(
-        'depends' => null,
-        'recommends' => null,
-        'suggests' => null,
-        'conflicts' => null,
-        'provides' => null,
-        'replaces' => null,
-        'enhances' => null
-        );
+    protected $_package;    
         
     /**
      * Creates a new package description object
@@ -106,63 +52,24 @@ class Lunette_Package_Cached implements Lunette_Package_Interface
                 $this->_control[$name] = $package->$name;
             }
         }
+        $this->_control['package'] = $package->name;
         $this->_control['date'] = $package->packageDate;
         $this->_control['changed-by'] = $package->changedBy;
         $this->_control['installed-size'] = (float)$package->installedSize;
-    }
-    
-    /**
-     * Gets the control value
-     * 
-     * If the name supplied isn't a valid control value, null will be returned.
-     *
-     * @param string $name The value name
-     * @return mixed The control value or null if not found
-     */
-    public function getControlValue( $name )
-    {
-        return isset($this->_control[$name]) ? $this->_control[$name] : null;
-    }
-
-    /**
-     * Gets the packages of a certain relation type
-     *
-     * @param Lunette_Package_RelationType $type The relationship type
-     * @return Lunette_Package_Relation_Set
-     */
-    public function getRelations( Lunette_Package_RelationType $type )
-    {
-        $name = strtolower($type->getName());
-        if ( $this->_relations[$name] === null ) {
-            $this->_relations[$name] = ( strlen(trim($this->_control[$name])) ) ?
-                Lunette_Package_Relation_Set::parse($this, $type, $this->_control[$name])
-                : new Lunette_Package_Relation_Set;
-            
-        }
-        return $this->_relations[$name];
     }
 
     /**
      * Gets the current installed state
      *
+     * @param Lunette_Package_Service
      * @return Lunette_Package_State
      */
-    public function getState()
+    public function getState( Lunette_Package_Service $service )
     {
         if ( $this->_state === null ) {
             $this->_state = Xyster_Enum::valueOf('Lunette_Package_State',
                 $this->_package->state);
         }
         return $this->_state;
-    }
-    
-    /**
-     * Gets the string equivalent of the object
-     * 
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->_control['package'] . ' ' . $this->_control['version'];
     }
 }
