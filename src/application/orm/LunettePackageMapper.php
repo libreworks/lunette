@@ -25,22 +25,14 @@
  */
 require_once 'Lunette/Orm/Mapper.php';
 /**
- * Mapper for {@link LunetteCache}
+ * A package mapper
  *
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
  * @package Lunette_Orm
  */
-class LunetteCacheMapper extends Lunette_Orm_Mapper
+class LunettePackageMapper extends Lunette_Orm_Mapper
 {
     protected $_index = array('name_index' => array('name'));
-    
-    /**
-     * Sets up the mapper
-     */
-    public function init()
-    {
-        $this->_hasMany('options', array('class'=>'LunetteCacheOption'));
-    }
 }

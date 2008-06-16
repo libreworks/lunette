@@ -21,26 +21,17 @@
  * @version $Id$
  */
 /**
- * @see Lunette_Orm_Mapper
+ * Xyster_Orm_Entity
  */
-require_once 'Lunette/Orm/Mapper.php';
+require_once 'Xyster/Orm/Entity.php';
 /**
- * Mapper for {@link LunetteCache}
+ * A package
  *
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
  * @package Lunette_Orm
  */
-class LunetteCacheMapper extends Lunette_Orm_Mapper
+class LunettePackage extends Xyster_Orm_Entity
 {
-    protected $_index = array('name_index' => array('name'));
-    
-    /**
-     * Sets up the mapper
-     */
-    public function init()
-    {
-        $this->_hasMany('options', array('class'=>'LunetteCacheOption'));
-    }
 }

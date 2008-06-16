@@ -119,6 +119,50 @@ class Lunette_TestDbSetup
     }
     
     /**
+     * Sets up the package table
+     */
+    public function setupPackage()
+    {
+        $db = $this->getDbAdapter();
+        if ( in_array('lunette_package', $db->listTables()) ) {
+            $db->query('DELETE FROM lunette_package');
+        } else {
+            $this->_getGateway()->createTable('lunette_package')
+                ->addIdentity('lunette_package_id')
+                ->addVarchar('maintainer', 255) // man
+                ->addVarchar('uploaders', 255)->null()
+                ->addVarchar('changed_by', 255)->null()
+                ->addVarchar('section', 50)->null()
+                ->addVarchar('priority', 25)->null()
+                ->addVarchar('package', 50)->unique() // man
+                ->addVarchar('architecture', 25)->null()
+                ->addVarchar('essential', 10)->null()
+                ->addClob('depends')->null()
+                ->addClob('recommends')->null()
+                ->addClob('suggests')->null()
+                ->addClob('conflicts')->null()
+                ->addClob('provides')->null()
+                ->addClob('replaces')->null()
+                ->addClob('enhances')->null()
+                ->addVarchar('version', 25) // man
+                ->addClob('description') // man
+                ->addTimestamp('package_date')->null()
+                ->addVarchar('urgency', 15)->null()
+                ->addFloat('installed_size')->null()
+                ->addInteger('state')->defaultValue(0)
+                ->execute();
+        }
+    }
+    
+    /**
+     * Tears down the package table
+     */
+    public function tearDownPackage()
+    {
+        $this->_getGateway()->dropTable('lunette_package');
+    }
+    
+    /**
      * Gets the database adapter
      *
      * @return Zend_Db_Adapter_Pdo_Sqlite
