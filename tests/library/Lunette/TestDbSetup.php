@@ -150,6 +150,11 @@ class Lunette_TestDbSetup
                 ->addTimestamp('package_date')->null()
                 ->addVarchar('urgency', 15)->null()
                 ->addFloat('installed_size')->null()
+                ->addClob('preinst')->null()
+                ->addClob('postinst')->null()
+                ->addClob('prerm')->null()
+                ->addClob('postrm')->null()
+                ->addClob('files')->null()
                 ->execute();
         }
     }
