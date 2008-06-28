@@ -139,6 +139,16 @@ class Lunette_Package_CachedTest extends PHPUnit_Framework_TestCase
         $this->setExpectedException('Lunette_Package_Exception', 'Invalid script name: foobar');
         $this->object->getScript('foobar');
     }
+
+    /**
+     * Tests the 'getScriptRunner' method
+     */
+    public function testGetScriptRunner()
+    {
+        require_once 'Lunette/Application.php';
+        $runner = $this->object->getScriptRunner(new Lunette_Application());
+        $this->assertType('Lunette_Package_ScriptRunner', $runner);
+    }
     
     /**
      * Tests the 'getState' method

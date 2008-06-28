@@ -33,6 +33,10 @@ require_once 'Lunette/Package/Relation/Set.php';
  */
 require_once 'Lunette/Package/State.php';
 /**
+ * @see Lunette_Package_ScriptRunner
+ */
+require_once 'Lunette/Package/ScriptRunner.php';
+/**
  * Abstract package information object
  *
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
@@ -76,6 +80,11 @@ abstract class Lunette_Package_Abstract implements Lunette_Package_Interface
      * @var Lunette_Package_State
      */
     protected $_state;
+    
+    /**
+     * @var Lunette_Package_Runner
+     */
+    protected $_runner;
     
     /**
      * @var array
@@ -132,6 +141,17 @@ abstract class Lunette_Package_Abstract implements Lunette_Package_Interface
             
         }
         return $this->_relations[$name];
+    }
+    
+    /**
+     * Gets a script runner for this package
+     *
+     * @param Lunette_Application $app
+     * @return Lunette_Package_ScriptRunner
+     */
+    public function getScriptRunner( Lunette_Application $app )
+    {
+        return new Lunette_Package_ScriptRunner($app, $this);
     }
     
     /**

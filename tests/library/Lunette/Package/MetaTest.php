@@ -94,6 +94,16 @@ class Lunette_Package_MetaTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests the 'getScriptRunner' method
+     */
+    public function testGetScriptRunner()
+    {
+        require_once 'Lunette/Application.php';
+        $runner = $this->object->getScriptRunner(new Lunette_Application());
+        $this->assertType('Lunette_Package_ScriptRunner', $runner);
+    }
+    
+    /**
      * Tests the 'getState' method
      */
     public function testGetState()
