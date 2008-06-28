@@ -30,6 +30,18 @@ require_once 'Zend/Db/Adapter/Pdo/Sqlite.php';
  */
 require_once 'Xyster/Db/Gateway/Pdo/Sqlite.php';
 /**
+ * Xyster_Orm
+ */
+require_once 'Xyster/Orm.php';
+/**
+ * Xyster_Orm_Loader
+ */
+require_once 'Xyster/Orm/Loader.php';
+/**
+ * Lunette_Orm_Mapper
+ */
+require_once 'Lunette/Orm/Mapper.php';
+/**
  * A class to help with the database schema for unit testing
  *
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
@@ -65,6 +77,7 @@ class Lunette_TestDbSetup
                 ->addVarchar('value', 255)
                 ->primaryMulti(array('system', 'name'))
                 ->execute();
+            Xyster_Orm::getInstance()->setup('LunetteConfig');
         }
     }
     
@@ -96,6 +109,7 @@ class Lunette_TestDbSetup
                 ->addInteger('automatic_cleaning_factor')->defaultValue(10)->null()
                 ->addBoolean('ignore_user_abort')->defaultValue(false)->null()
                 ->execute();
+            Xyster_Orm::getInstance()->setup('LunetteCache');
         }
         if ( in_array('lunette_cache_option', $db->listTables()) ) {
             $db->query('DELETE FROM lunette_cache_option');
@@ -106,6 +120,7 @@ class Lunette_TestDbSetup
                 ->addVarchar('name', 255)
                 ->addVarchar('value', 255)
                 ->execute();
+            Xyster_Orm::getInstance()->setup('LunetteCacheOption');
         }
     }
     
@@ -156,6 +171,7 @@ class Lunette_TestDbSetup
                 ->addClob('postrm')->null()
                 ->addClob('files')->null()
                 ->execute();
+            Xyster_Orm::getInstance()->setup('LunettePackage');
         }
     }
     
@@ -176,6 +192,8 @@ class Lunette_TestDbSetup
     {
         if ( !self::$_db ) {
             self::$_db = new Zend_Db_Adapter_Pdo_Sqlite(array('dbname'=>':memory:'));
+            Xyster_Orm_Mapper::dsn('lunette', self::$_db);
+            Xyster_Orm_Loader::addPath(dirname(dirname(dirname(dirname(__FILE__)))) . '/src/application/orm');
         }
         return self::$_db;
     }

@@ -27,9 +27,6 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
 require_once dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
 require_once 'Lunette/TestDbSetup.php';
 require_once 'Lunette/Config/ServiceTest.php';
-require_once 'Lunette/Orm/Mapper.php';
-require_once 'Xyster/Orm/Loader.php';
-require_once 'Xyster/Orm.php';
 /**
  * The suite of tests for Lunette_Config
  *
@@ -63,8 +60,6 @@ class Lunette_Config_AllTests extends PHPUnit_Framework_TestSuite
     {
         $setup = new Lunette_TestDbSetup;
         $setup->setupConfig();
-        Lunette_Orm_Mapper::dsn('lunette', $setup->getDbAdapter());
-        Xyster_Orm_Loader::addPath(dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/src/application/orm');
         $this->sharedFixture = Xyster_Orm::getInstance();
     }
     
