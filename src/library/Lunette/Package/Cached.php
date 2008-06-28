@@ -38,7 +38,7 @@ class Lunette_Package_Cached extends Lunette_Package_Abstract
      * @var LunettePackage
      */
     protected $_package;    
-        
+    
     /**
      * Creates a new package description object
      *
@@ -58,6 +58,22 @@ class Lunette_Package_Cached extends Lunette_Package_Abstract
         $this->_control['installed-size'] = (float)$package->installedSize;
     }
 
+    /**
+     * Gets the source for the maintainer script supplied
+     *
+     * @param string $name
+     * @return string
+     */
+    public function getScript( $name )
+    {
+        if ( in_array($name, self::$_scripts) ) {
+            return $this->_package->$name;
+        }
+        
+        require_once 'Lunette/Package/Exception.php';
+        throw new Lunette_Package_Exception('Invalid script name: ' . $name);
+    }
+    
     /**
      * Gets the current installed state
      *

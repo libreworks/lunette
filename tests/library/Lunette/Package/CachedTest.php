@@ -73,6 +73,7 @@ class Lunette_Package_CachedTest extends PHPUnit_Framework_TestCase
         $package->depends = 'food, water, shelter (>= 2.0)';
         $package->provides = 'foo, bar';
         $package->conflicts = 'foo, bar';
+        $package->preinst = 'echo "Hello, world!";';
         $this->object = new Lunette_Package_Cached($package);
     }
 
@@ -121,6 +122,24 @@ class Lunette_Package_CachedTest extends PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * Tests the 'getScript' method
+     */
+    public function testGetScript()
+    {
+        $actual = $this->object->getScript('preinst');
+        $this->assertEquals('echo "Hello, world!";', $actual);
+    }
+    
+    /**
+     * Tests the 'getScript' method with a bad script name
+     */
+    public function testGetScriptInvalid()
+    {
+        $this->setExpectedException('Lunette_Package_Exception', 'Invalid script name: foobar');
+        $this->object->getScript('foobar');
+    }
+    
     /**
      * Tests the 'getState' method
      */

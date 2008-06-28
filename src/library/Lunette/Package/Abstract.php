@@ -89,6 +89,13 @@ abstract class Lunette_Package_Abstract implements Lunette_Package_Interface
         'replaces' => null,
         'enhances' => null
         );
+
+    /**
+     * The types of maintainer scripts
+     *
+     * @var array
+     */ 
+    protected static $_scripts = array('preinst', 'postinst', 'prerm', 'postrm');
             
     /**
      * @var array
