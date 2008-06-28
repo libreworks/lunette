@@ -151,7 +151,10 @@ abstract class Lunette_Package_Abstract implements Lunette_Package_Interface
      */
     public function getScriptRunner( Lunette_Application $app )
     {
-        return new Lunette_Package_ScriptRunner($app, $this);
+        if (! $this->_runner instanceof Lunette_Package_ScriptRunner ) {
+            $this->_runner = new Lunette_Package_ScriptRunner($app, $this); 
+        }
+        return $this->_runner;
     }
     
     /**
