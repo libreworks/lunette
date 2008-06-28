@@ -25,6 +25,18 @@
  */
 require_once 'Lunette/Orm/Mapper.php';
 /**
+ * Xyster_Orm_Entity_Lookup_Enum
+ */
+require_once 'Xyster/Orm/Entity/Lookup/Enum.php';
+/**
+ * Xyster_Type
+ */
+require_once 'Xyster/Type.php';
+/**
+ * @see Lunette_Package_State
+ */
+require_once 'Lunette/Package/State.php';
+/**
  * A package mapper
  *
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
@@ -35,4 +47,12 @@ require_once 'Lunette/Orm/Mapper.php';
 class LunettePackageMapper extends Lunette_Orm_Mapper
 {
     protected $_index = array('name_index' => array('name'));
+    
+    public function init()
+    {
+        $type = $this->getEntityType();
+        $lookup = new Xyster_Orm_Entity_Lookup_Enum($type,
+            new Xyster_Type('Lunette_Package_State'), 'state');
+        $type->addLookup($lookup);
+    }
 }
