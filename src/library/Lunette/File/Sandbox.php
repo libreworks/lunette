@@ -59,8 +59,9 @@ class Lunette_File_Sandbox implements IteratorAggregate
 
         // create the sandbox
         if (!@mkdir($this->_realpath, 0777)) {
+            $error = error_get_last();
             require_once 'Lunette/File/Exception.php';
-            throw new Lunette_File_Exception('Could not create the sandbox directory');
+            throw new Lunette_File_Exception('Could not create the sandbox directory: ' . $error['message']);
         }
     }
     
