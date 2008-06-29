@@ -137,6 +137,11 @@ class Lunette_Package_RelationTest extends PHPUnit_Framework_TestCase implements
         }
     }
 
+    public function getFiles()
+    {
+        return array();
+    }
+    
     /**
      * Gets the packages of a certain relation type
      *

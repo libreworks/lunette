@@ -59,6 +59,16 @@ class Lunette_Package_Cached extends Lunette_Package_Abstract
     }
 
     /**
+     * Gets the list of files, excluding directories
+     *
+     * @return array
+     */
+    public function getFiles()
+    {
+        return explode("\n", $this->_package->files);
+    }
+    
+    /**
      * Gets the source for the maintainer script supplied
      *
      * @param string $name

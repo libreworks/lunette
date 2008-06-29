@@ -82,11 +82,6 @@ abstract class Lunette_Package_Abstract implements Lunette_Package_Interface
     protected $_state;
     
     /**
-     * @var Lunette_Package_Runner
-     */
-    protected $_runner;
-    
-    /**
      * @var array
      */
     protected $_relations = array(
@@ -151,10 +146,7 @@ abstract class Lunette_Package_Abstract implements Lunette_Package_Interface
      */
     public function getScriptRunner( Lunette_Application $app )
     {
-        if (! $this->_runner instanceof Lunette_Package_ScriptRunner ) {
-            $this->_runner = new Lunette_Package_ScriptRunner($app, $this); 
-        }
-        return $this->_runner;
+        return new Lunette_Package_ScriptRunner($app, $this);
     }
     
     /**

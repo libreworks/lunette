@@ -74,6 +74,7 @@ class Lunette_Package_CachedTest extends PHPUnit_Framework_TestCase
         $package->provides = 'foo, bar';
         $package->conflicts = 'foo, bar';
         $package->preinst = 'echo "Hello, world!";';
+        $package->files = implode("\n", array('myfile.txt', 'myfile2.txt'));
         $this->object = new Lunette_Package_Cached($package);
     }
 
@@ -101,6 +102,14 @@ class Lunette_Package_CachedTest extends PHPUnit_Framework_TestCase
             $this->assertEquals($expected, $this->object->getControlValue($key));
         }
     }
+    
+    /**
+     * Tests the 'getFiles' method
+     */
+    public function testGetFiles()
+    {
+        $this->assertEquals(array('myfile.txt', 'myfile2.txt'), $this->object->getFiles());
+    }
 
     /**
      * Tests the 'getRelations' method
@@ -121,7 +130,7 @@ class Lunette_Package_CachedTest extends PHPUnit_Framework_TestCase
             }
         }
     }
-
+    
     /**
      * Tests the 'getScript' method
      */

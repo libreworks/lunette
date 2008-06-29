@@ -28,9 +28,6 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
 require_once dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
 require_once 'Lunette/Package/Meta.php';
 require_once 'Lunette/TestDbSetup.php';
-require_once 'Lunette/Orm/Mapper.php';
-require_once 'Xyster/Orm/Loader.php';
-require_once 'Xyster/Orm.php';
 
 /**
  * Test class for Lunette_Package_Meta.
@@ -60,10 +57,6 @@ class Lunette_Package_MetaTest extends PHPUnit_Framework_TestCase
     {
         $setup = new Lunette_TestDbSetup;
         $setup->setupPackage();
-        Lunette_Orm_Mapper::dsn('lunette', $setup->getDbAdapter());
-        Xyster_Orm_Loader::addPath(dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/src/application/orm');
-        Xyster_Orm::getInstance()->setup('LunettePackage');
-        
         $this->object = new Lunette_Package_Meta(dirname(dirname(__FILE__)) . '/File/Archive/_files/unittest-1.0-all.deb');
     }
 
@@ -81,6 +74,16 @@ class Lunette_Package_MetaTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests the 'getFiles' method
+     */
+    public function testGetFiles()
+    {
+        $files = array('bar/loremipsum.txt~', 'bar/loremipsum.txt',
+            'foo/lipsum.txt~', 'foo/lipsum.txt');
+        $this->assertEquals($files, $this->object->getFiles());
+    }
+    
+    /**
      * Tests the 'getRelations' method
      */
     public function testGetRelations()
@@ -93,6 +96,15 @@ class Lunette_Package_MetaTest extends PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * Tests the 'getScriptFilename' method
+     */
+    public function testGetScriptFilename()
+    {
+        // the unit test file has no maintainer scripts yet
+        $this->assertNull($this->object->getScriptFilename('preinst'));
+    }
+    
     /**
      * Tests the 'getScriptRunner' method
      */

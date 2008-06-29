@@ -41,6 +41,13 @@ interface Lunette_Package_Interface
     function getControlValue( $name );
 
     /**
+     * Gets the list of files, excluding directories
+     *
+     * @return array
+     */
+    function getFiles();
+    
+    /**
      * Gets the packages of a certain relation type
      *
      * @param Lunette_Package_Relation_Type $type The relationship type

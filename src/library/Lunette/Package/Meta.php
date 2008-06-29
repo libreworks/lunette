@@ -56,6 +56,11 @@ class Lunette_Package_Meta extends Lunette_Package_Abstract
     protected $_archive;
     
     /**
+     * @var Lunette_File_Archive_Tar
+     */
+    protected $_data;
+    
+    /**
      * @var Lunette_File_Sandbox
      */
     protected $_sandbox;
@@ -81,6 +86,8 @@ class Lunette_Package_Meta extends Lunette_Package_Abstract
         $controlFilename = $realpath . DIRECTORY_SEPARATOR . 'control.tar.gz';
         $control = new Lunette_File_Archive_Tar(new Lunette_File_Reader_Gz($controlFilename));
         $this->_process($control->extractFile('control'));
+        // extract the maintainer scripts
+        $control->extractList(self::$_scripts, $realpath);
         $control = null;
     }
     
@@ -89,8 +96,38 @@ class Lunette_Package_Meta extends Lunette_Package_Abstract
      */
     public function __destruct()
     {
+        $this->_data = null;
         $this->_archive = null;
         $this->_sandbox = null;
+    }
+
+    /**
+     * Gets the list of files, excluding directories
+     *
+     * @return array
+     */
+    public function getFiles()
+    {
+        return $this->_getData()->ls();
+    }
+    
+    /**
+     * Gets the filename of the maintainer script
+     *
+     * If there is no corresponding maintainer script, null will be returned.
+     * 
+     * @param string $name "preinst", "postinst", "prerm", or "postrm"
+     * @return string The filename
+     */
+    public function getScriptFilename( $name )
+    {
+        $filename = null;
+        
+        if ( in_array($name, self::$_scripts) ) {
+            $filename = $this->_sandbox->getRealpath() . DIRECTORY_SEPARATOR . $name;
+        }
+        
+        return (strlen($filename) && @file_exists($filename)) ? $filename : null;
     }
     
     /**
@@ -107,6 +144,23 @@ class Lunette_Package_Meta extends Lunette_Package_Abstract
             $this->_state = Xyster_Enum::valueOf('Lunette_Package_State', $state);
         }
         return $this->_state;
+    }
+    
+    /**
+     * Gets the 'data' archive which contains all of the package files
+     *
+     * @return Lunette_File_Archive_Tar
+     */
+    protected function _getData()
+    {
+        if ( !$this->_data ) {
+            // extract and process the data
+            $realpath = $this->_sandbox->getRealpath();
+            $this->_archive->extractList(array('data.tar.gz'), $realpath);
+            $dataFilename = $realpath . DIRECTORY_SEPARATOR . 'data.tar.gz';
+            $this->_data = new Lunette_File_Archive_Tar(new Lunette_File_Reader_Gz($dataFilename));
+        }
+        return $this->_data;
     }
     
     /**

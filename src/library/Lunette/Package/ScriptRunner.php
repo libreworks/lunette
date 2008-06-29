@@ -122,8 +122,10 @@ class Lunette_Package_ScriptRunner
         ob_start();
         try {
             if ( $this->_pkg instanceof Lunette_Package_Meta ) {
-                
-                /* @todo Need to get the maintainer scripts out of the archive */
+                $filename = $this->_pkg->getScriptFilename($scriptName);
+                if ( $filename !== null ) {
+                    $result = $this->_runFile($filename, $args);
+                }
                 
             } else if ( $this->_pkg instanceof Lunette_Package_Cached ) {
                 $source = $this->_pkg->getScript($scriptName);
