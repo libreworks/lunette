@@ -151,6 +151,26 @@ class Lunette_Package_Relation implements Lunette_Package_Relation_Interface
     }
     
     /**
+     * Tests if the package supplied meets the target of this requirement
+     *
+     * @param Lunette_Package_Interface $pkg
+     * @return boolean
+     */
+    public function isTarget( Lunette_Package_Interface $pkg )
+    {
+        $target = false;
+        if ( $pkg->getControlValue('package') == $this->_name ) {
+            if ( $this->_version ) {
+                $target = $this->_operator->evaluate($pkg->getControlValue('version'),
+                    $this->_version);
+            } else {
+                $target = true;
+            }
+        }
+        return $target;
+    }
+    
+    /**
      * Parses the requirement information
      *
      * @param string $req

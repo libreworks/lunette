@@ -47,7 +47,15 @@ interface Lunette_Package_Interface
      * @return Lunette_Package_Relation_Set
      */
     function getRelations( Lunette_Package_Relation_Type $type );
-
+    
+    /**
+     * Gets a script runner for this package
+     *
+     * @param Lunette_Application $app
+     * @return Lunette_Package_ScriptRunner
+     */
+    function getScriptRunner( Lunette_Application $app );
+    
     /**
      * Gets the current installed state
      *
