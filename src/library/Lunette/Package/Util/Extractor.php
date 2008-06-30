@@ -71,6 +71,21 @@ class Lunette_Package_Util_Extractor extends Lunette_File_Writer
     }
     
     /**
+     * Puts the old files back in place, used as a roll-back
+     */
+    public function replaceOld()
+    {
+        $deleteFirst = !strcasecmp(substr(PHP_OS, 0, 3), 'WIN');
+        foreach( $this->_backs as $filename ) {
+            $realFilename = substr($filename, 0, -8);
+            if ( $deleteFirst && @file_exists($realFilename) ) {
+                @unlink($realFilename);
+            }
+            @rename($filename, $realFilename);
+        }
+    }
+    
+    /**
      * Removes all of the backed-up old files
      */
     public function removeOld()

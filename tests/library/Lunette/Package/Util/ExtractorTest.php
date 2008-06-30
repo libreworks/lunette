@@ -108,7 +108,40 @@ class Lunette_Package_Util_ExtractorTest extends PHPUnit_Framework_TestCase
             $this->assertFileNotExists($expectedFile);
         }
     }
-
+    
+    /**
+     * Tests the 'backupOld' and 'replaceOld' methods
+     */
+    public function testBackupAndReplaceOld()
+    {
+        $files = array('test.txt', 'test2.txt', 'test3.txt', 'test4.txt');
+        $expected = array();
+        foreach( $files as $file ) {
+            $filename = $this->sandbox->getRealpath() . '/' . $file;
+            file_put_contents($filename, 'test123');
+            $expected[] = $filename . '.pkg.tmp';
+        }
+        
+        $old = $this->getMock('Lunette_Package_Interface');
+        $old->expects($this->any())->method('getFiles')->will($this->returnValue($files));
+        
+        $this->object->backupOld($old);
+        $this->assertAttributeEquals($expected, '_backs', $this->object);
+        
+        foreach( $expected as $expectedFile ) {
+            $this->assertFileExists($expectedFile);
+            file_put_contents(substr($expectedFile, 0, -8).'.new', 'aoeuaoeuaoeu');
+            rename(substr($expectedFile, 0, -8).'.new', substr($expectedFile, 0, -8));
+        }
+        
+        $this->object->replaceOld();
+        
+        foreach( $expected as $expectedFile ) {
+            $this->assertFileNotExists($expectedFile);
+            $this->assertEquals('test123', file_get_contents(substr($expectedFile, 0, -8)));
+        }
+    }
+    
     /**
      * Tests the 'getFilename' method
      */

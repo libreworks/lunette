@@ -100,7 +100,24 @@ class Lunette_Package_Meta extends Lunette_Package_Abstract
         $this->_archive = null;
         $this->_sandbox = null;
     }
-
+    
+    /**
+     * Gets the 'data' archive which contains all of the package files
+     *
+     * @return Lunette_File_Archive_Tar
+     */
+    public function getData()
+    {
+        if ( !$this->_data ) {
+            // extract and process the data
+            $realpath = $this->_sandbox->getRealpath();
+            $this->_archive->extractList(array('data.tar.gz'), $realpath);
+            $dataFilename = $realpath . DIRECTORY_SEPARATOR . 'data.tar.gz';
+            $this->_data = new Lunette_File_Archive_Tar(new Lunette_File_Reader_Gz($dataFilename));
+        }
+        return $this->_data;
+    }
+    
     /**
      * Gets the list of files, excluding directories
      *
@@ -108,7 +125,7 @@ class Lunette_Package_Meta extends Lunette_Package_Abstract
      */
     public function getFiles()
     {
-        return $this->_getData()->ls();
+        return $this->getData()->ls();
     }
     
     /**
@@ -144,23 +161,6 @@ class Lunette_Package_Meta extends Lunette_Package_Abstract
             $this->_state = Xyster_Enum::valueOf('Lunette_Package_State', $state);
         }
         return $this->_state;
-    }
-    
-    /**
-     * Gets the 'data' archive which contains all of the package files
-     *
-     * @return Lunette_File_Archive_Tar
-     */
-    protected function _getData()
-    {
-        if ( !$this->_data ) {
-            // extract and process the data
-            $realpath = $this->_sandbox->getRealpath();
-            $this->_archive->extractList(array('data.tar.gz'), $realpath);
-            $dataFilename = $realpath . DIRECTORY_SEPARATOR . 'data.tar.gz';
-            $this->_data = new Lunette_File_Archive_Tar(new Lunette_File_Reader_Gz($dataFilename));
-        }
-        return $this->_data;
     }
     
     /**

@@ -31,6 +31,7 @@ require_once 'Lunette/Package/RelationTest.php';
 require_once 'Lunette/Package/Relation/TypeTest.php';
 require_once 'Lunette/Package/Relation/SetTest.php';
 require_once 'Lunette/Package/ScriptRunnerTest.php';
+require_once 'Lunette/Package/ServiceTest.php';
 require_once 'Lunette/Package/StateTest.php';
 require_once 'Lunette/Package/TransactionTest.php';
 require_once 'Lunette/Package/Transaction/EntryTest.php';
@@ -64,6 +65,7 @@ class Lunette_Package_AllTests extends PHPUnit_Framework_TestSuite
         $suite->addTestSuite('Lunette_Package_Relation_TypeTest');
         $suite->addTestSuite('Lunette_Package_Relation_SetTest');
         $suite->addTestSuite('Lunette_Package_ScriptRunnerTest');
+        $suite->addTestSuite('Lunette_Package_ServiceTest');
         $suite->addTestSuite('Lunette_Package_StateTest');
         $suite->addTestSuite('Lunette_Package_TransactionTest');
         $suite->addTestSuite('Lunette_Package_Transaction_EntryTest');

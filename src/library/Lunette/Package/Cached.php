@@ -65,7 +65,13 @@ class Lunette_Package_Cached extends Lunette_Package_Abstract
      */
     public function getFiles()
     {
-        return explode("\n", $this->_package->files);
+        $files = explode("\n", $this->_package->files);
+        foreach( $files as $key => $file ) {
+            if ( $file == '' ) {
+                unset($files[$key]);
+            }
+        }
+        return array_values($files);
     }
     
     /**

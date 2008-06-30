@@ -60,9 +60,6 @@ class Lunette_Package_CachedTest extends PHPUnit_Framework_TestCase
     {
         $setup = new Lunette_TestDbSetup;
         $setup->setupPackage();
-        Lunette_Orm_Mapper::dsn('lunette', $setup->getDbAdapter());
-        Xyster_Orm_Loader::addPath(dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/src/application/orm');
-        Xyster_Orm::getInstance()->setup('LunettePackage');
         
         $package = new LunettePackage;
         $package->name = 'foobar-package';
@@ -74,7 +71,7 @@ class Lunette_Package_CachedTest extends PHPUnit_Framework_TestCase
         $package->provides = 'foo, bar';
         $package->conflicts = 'foo, bar';
         $package->preinst = 'echo "Hello, world!";';
-        $package->files = implode("\n", array('myfile.txt', 'myfile2.txt'));
+        $package->files = "\n" . implode("\n", array('myfile.txt', 'myfile2.txt')) . "\n";
         $this->object = new Lunette_Package_Cached($package);
     }
 
