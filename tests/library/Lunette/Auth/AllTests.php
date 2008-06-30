@@ -17,28 +17,22 @@
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
- * @package Lunette
+ * @package Lunette_Auth
  * @subpackage Tests
  * @version $Id$
  */
 if (!defined('PHPUnit_MAIN_METHOD')) {
-    define('PHPUnit_MAIN_METHOD', 'Lunette_AllTests::main');
+    define('PHPUnit_MAIN_METHOD', 'Lunette_Auth_AllTests::main');
 }
-require_once dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
-require_once 'Lunette/ApplicationTest.php';
-require_once 'Lunette/Auth/AllTests.php';
-require_once 'Lunette/Cache/AllTests.php';
-require_once 'Lunette/Config/AllTests.php';
-require_once 'Lunette/File/AllTests.php';
-require_once 'Lunette/Package/AllTests.php';
-require_once 'Lunette/User/ServiceTest.php';
-require_once 'Lunette/VersionTest.php';
+require_once dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
+require_once 'Lunette/Auth/AdapterTest.php';
+require_once 'Lunette/Auth/PluginTest.php';
 
 /**
- * The suite of tests for Lunette_Package
+ * The suite of tests for Lunette_Auth
  *
  */
-class Lunette_AllTests extends PHPUnit_Framework_TestSuite
+class Lunette_Auth_AllTests extends PHPUnit_Framework_TestSuite
 {
     /**
      * Executes the suite
@@ -55,19 +49,13 @@ class Lunette_AllTests extends PHPUnit_Framework_TestSuite
      */
     public static function suite()
     {
-        $suite = new self('Lunette Platform - Lunette');
-        $suite->addTestSuite('Lunette_ApplicationTest');
-        $suite->addTest( Lunette_Auth_AllTests::suite() );
-        $suite->addTest( Lunette_Cache_AllTests::suite() );
-        $suite->addTest( Lunette_Config_AllTests::suite() );
-        $suite->addTest( Lunette_File_AllTests::suite() );
-        $suite->addTest( Lunette_Package_AllTests::suite() );
-        $suite->addTestSuite('Lunette_User_ServiceTest');
-        $suite->addTestSuite('Lunette_VersionTest');
+        $suite = new self('Lunette Platform - Lunette_Auth');
+        $suite->addTestSuite('Lunette_Auth_AdapterTest');
+        $suite->addTestSuite('Lunette_Auth_PluginTest');
         return $suite;
     }
 }
 
-if (PHPUnit_MAIN_METHOD == 'Lunette_AllTests::main') {
-    Lunette_AllTests::main();
+if (PHPUnit_MAIN_METHOD == 'Lunette_Auth_AllTests::main') {
+    Lunette_Auth_AllTests::main();
 }

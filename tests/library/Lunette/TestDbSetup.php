@@ -184,6 +184,35 @@ class Lunette_TestDbSetup
     }
     
     /**
+     * Sets up the user database table
+     */
+    public function setupUser()
+    {
+        $db = $this->getDbAdapter();
+        if ( in_array('lunette_user', $db->listTables()) ) {
+            $db->query('DELETE FROM lunette_user');
+        } else {
+            $this->_getGateway()->createTable('lunette_user')
+                ->addIdentity('lunette_package_id')
+                ->addVarchar('email', 255)->unique()
+                ->addVarchar('username', 255)->unique()
+                ->addTimestamp('created_on')->null()
+                ->addVarchar('password', 255)->null()
+                ->addVarchar('timezone', 50)->null()
+                ->execute();
+            Xyster_Orm::getInstance()->setup('LunetteUser');
+        }
+    }
+    
+    /**
+     * Tears down the user table
+     */
+    public function tearDownUser()
+    {
+        $this->_getGateway()->dropTable('lunette_user');
+    }
+    
+    /**
      * Gets the database adapter
      *
      * @return Zend_Db_Adapter_Pdo_Sqlite

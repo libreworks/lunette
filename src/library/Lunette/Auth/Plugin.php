@@ -21,70 +21,100 @@
  * @version $Id$
  */
 /**
- * Lunette authentication plugin
+ * @see Lunette_Auth_Plugin_Interface
+ */
+require_once 'Lunette/Auth/Plugin/Interface.php';
+/**
+ * Default Lunette authentication plugin
  *
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
  * @package Lunette_Auth
  */
-interface Lunette_Auth_Plugin_Interface
+class Lunette_Auth_Plugin implements Lunette_Auth_Plugin_Interface
 {
+    /**
+     * @var Lunette_User_Service
+     */
+    protected $_service;
+    
+    /**
+     * Creates a new authentication plugin
+     *
+     * @param Lunette_User_Service $service
+     */
+    public function __construct( Lunette_User_Service $service )
+    {
+        $this->_service = $service;
+    }
+    
     /**
      * Gets whether the password associated with the user can be changed 
      *
      * @return boolean
      */
-    function canChangePassword();
+    public function canChangePassword()
+    {
+        return true;
+    }
     
     /**
      * Gets the authentication adapter
-     * 
-     * If you're clever with interface usage, you can make your auth plugin the
-     * adapter as well.
      *
      * @param array $creds Optional array of credentials
      * @return Zend_Auth_Adapter_Interface
      */
-    function getAuthAdapter( array $creds = array() );
+    public function getAuthAdapter( array $creds = array() )
+    {
+        $user = isset($creds['email']) ? $creds['email'] : null;
+        $password = isset($creds['password']) ? $creds['password'] : null;
+        return new Lunette_Auth_Adapter($this->_service, $user, $password);
+    }
     
     /**
      * Gets the form to display for user input
      *
      * @return Zend_Form or null if no form is needed
      */
-    function getForm();
+    public function getForm()
+    {
+        require_once 'Lunette/Auth/Form.php';
+        return new Lunette_Auth_Form;
+    }
     
     /**
      * Return user settings for new users if they're automatically available
-     *
-     * The user info array needs to be an associative array of values available
-     * as fields on the {@link LunetteUser} class.
      * 
      * @param string $username
      * @return array
      */
-    function getUserInfo( $username );
+    public function getUserInfo( $username )
+    {
+        return array();
+    }
     
     /**
      * Sets the password for a user
-     * 
-     * Lunette will only call this method if {@link canChangePassword} returns
-     * true.  Feel free to handle errors appropriately anyway.
      *
      * @param string $username The username of the account
      * @param string $password The new password
      */
-    function setPassword( $username, $password );
+    public function setPassword( $username, $password )
+    {
+        $user = $this->_service->getByUsername($username);
+        if ( $user instanceof LunetteUser ) {
+            $this->_service->setPassword($user, $password);
+        }
+    }
     
     /**
      * Whether this plugin supports auto-authentication
-     * 
-     * Auto-authentication requires no input from the user.  The user's identity
-     * is predetermined, for example, the DN in an SSL client certificate or
-     * another HTTP header
      *
      * @return boolean
      */
-    function supportsAutoAuth();
+    public function supportsAutoAuth()
+    {
+        return false;
+    }
 }
