@@ -34,6 +34,7 @@ require_once 'Lunette/Package/ScriptRunnerTest.php';
 require_once 'Lunette/Package/StateTest.php';
 require_once 'Lunette/Package/TransactionTest.php';
 require_once 'Lunette/Package/Transaction/EntryTest.php';
+require_once 'Lunette/Package/Util/ExtractorTest.php';
 
 /**
  * The suite of tests for Lunette_Package
@@ -66,6 +67,7 @@ class Lunette_Package_AllTests extends PHPUnit_Framework_TestSuite
         $suite->addTestSuite('Lunette_Package_StateTest');
         $suite->addTestSuite('Lunette_Package_TransactionTest');
         $suite->addTestSuite('Lunette_Package_Transaction_EntryTest');
+        $suite->addTestSuite('Lunette_Package_Util_ExtractorTest');
         return $suite;
     }
 }
