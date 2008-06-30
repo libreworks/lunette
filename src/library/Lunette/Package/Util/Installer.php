@@ -21,6 +21,10 @@
  * @version $Id$
  */
 /**
+ * @see Lunette_Package_Util_Unpacker
+ */
+require_once 'Lunette/Package/Util/Unpacker.php';
+/**
  * Package installer
  * 
  * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
@@ -41,6 +45,11 @@ class Lunette_Package_Util_Installer
     protected $_service;
     
     /**
+     * @var array
+     */
+    protected $_errors = array();
+    
+    /**
      * Creates a new package installer
      *
      * @param Lunette_Application $app
@@ -53,15 +62,48 @@ class Lunette_Package_Util_Installer
     }
     
     /**
+     * Gets the errors that occurred
+     *
+     * @return array
+     */
+    public function getErrors()
+    {
+        return $this->_errors;
+    }
+    
+    /**
      * Installs a package
      *
      * @param Lunette_Package_Interface $pkg
      * @param Lunette_Package_Transaction $tx
+     * @return boolean
      */
     public function install( Lunette_Package_Interface $pkg, Lunette_Package_Transaction $tx )
     {
-        $unpacker = new Lunette_Package_Unpacker($this->_app, $this->_service, $pkg);
-        $unpacker->unpack($tx);
+        // determine the most-recently configured version
+        $oldVersion = null;
+        if ( $oldpkg = $this->_service->getByName($packageName) ) {
+            $oldPackage = new Lunette_Package_Cached($oldpkg);
+            if ( $oldPackage->getState($this->_service) === Lunette_Package_State::Installed() ||
+                 $oldPackage->getState($this->_service) === Lunette_Package_State::ConfigFiles() ) {
+                $oldVersion = $oldpkg->version;
+            }
+        }
+        
+        $unpacker = new Lunette_Package_Util_Unpacker($this->_app, $this->_service, $pkg);
+        if ( $unpacker->unpack($tx) ) {
+            $runner = $pkg->getScriptRunner($this->_app);
+            if ( !$runner->postinst(array('configure', $oldVersion)) ) {
+                $this->_errors[] = $runner->getError();
+                $this->_service->setState($pkg, Lunette_Package_State::HalfConfigured());
+                return false;
+            }
+            
+            // the new package is installed!
+            $this->_service->setState($pkg, Lunette_Package_State::Installed());
+            return true;
+        }
+        $this->_errors += $unpacker->getErrors();
+        return false;
     }
-    
 }

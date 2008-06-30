@@ -41,9 +41,9 @@ class Lunette_Package_Util_Unpacker
     protected $_service;
     
     /**
-     * @var Lunette_Package_Transaction
+     * @var boolean
      */
-    protected $_tx;
+    protected $_exit = false;
     
     /**
      * @var Lunette_Package_Interface
@@ -75,8 +75,6 @@ class Lunette_Package_Util_Unpacker
      */
     protected $_errors = array();
     
-    protected $_backups = array();
-    
     protected $_conflicting = array();
     
     /**
@@ -87,13 +85,13 @@ class Lunette_Package_Util_Unpacker
      */
     public function __construct( Lunette_Application $app, Lunette_Package_Service $service, Lunette_Package_Interface $pkg )
     {
+        $this->_app = $app;
         $this->_service = $service;
         $this->_pkg = $pkg;
         $this->_runner = $pkg->getScriptRunner($app);
-        $this->_app = $app;
         
-        if ( $oldpkg = $this->_service->getByName($packageName) ) {
-            $this->_old = new Lunette_Package_Cached($pkg);
+        if ( $oldpkg = $this->_service->getByName($pkg->getControlValue('package')) ) {
+            $this->_old = new Lunette_Package_Cached($oldpkg);
             $this->_isUpgrade = ( $this->_old->getState($service) === Lunette_Package_State::Installed() );
             $this->_oldRunner = $this->_old->getScriptRunner($app);
         }
@@ -113,12 +111,12 @@ class Lunette_Package_Util_Unpacker
      * Does the unpack process
      *
      * @param Lunette_Package_Transaction $tx
+     * @return boolean
      */
     public function unpack( Lunette_Package_Transaction $tx )
     {
-        $this->_tx = $tx;
-        /* @todo do unpack */
-
+        $writer = new Lunette_Package_Util_Extractor(dirname($this->_app->getApplicationPath()));
+                
         /*
          * Step 1 (PackageInstalled)
          * Step 2 (DeconfigureConflicting)
@@ -134,6 +132,30 @@ class Lunette_Package_Util_Unpacker
          * Step 12 (UnpackedState)
          * Step 13 (RemoveConflicting) 
          */
+        
+        $this->versionInstalled();
+        if ( !$this->_exit ) {
+            $this->deconfigureConflicting($tx);
+            $this->preInstall();
+            if ( !$this->_exit ) {
+                $this->doUnpack($writer);
+                if ( !$this->_exit ) {
+                    $this->postUpgrade($writer);
+                    if ( !$this->_exit ) {
+                        $this->removeOld($writer);
+                        $this->fileList();
+                        $this->scripts();
+                        $this->disappear();
+                        $this->lobotomizeFilelist();
+                        $this->removeBackups();
+                        $this->unpackedState();
+                        $this->removeConflicting();
+                    }
+                }
+            }
+        }
+        
+        return $this->_exit;
     }
 
     /**
@@ -162,11 +184,11 @@ class Lunette_Package_Util_Unpacker
     /**
      * Step 2: If a "conflicting" package is being removed at the same time
      */
-    public function deconfigureConflicting()
+    public function deconfigureConflicting( Lunette_Package_Transaction $tx )
     {
         foreach( $this->_pkg->getRelations(Lunette_Package_Relation_Type::Conflicts()) as $relation ) {
             /* @var $relation Lunette_Package_Relation */
-            foreach( $this->_tx as $txEntry ) {
+            foreach( $tx as $txEntry ) {
                 /* @var $txEntry Lunette_Package_Transaction_Entry */
                 if ( $txEntry->isRemove() && $relation->isTarget($txEntry->getPackage()) ) {
                     $this->_conflicting[] = $txEntry;
@@ -249,26 +271,29 @@ class Lunette_Package_Util_Unpacker
     /**
      * Step 4: Backup old files and unpack new ones
      */
-    public function unpack()
+    public function doUnpack( Lunette_Package_Util_Extractor $writer )
     {
-        // @todo error if files are being replaced
-        
-        // @todo need base path 
-        
-        if ( $this->_old ) {
-            // @todo backup old files
-            
+        $packagesWithFiles = $this->_service->getWithMatchingFiles($this->_pkg);
+        if ( count($packagesWithFiles) ) {
+            $this->_errors[] = 'Cannot install; following packages have same files: ' . 
+                implode(', ', $packagesWithFiles->fetchColumn('name'));
+            $this->_exit();
         }
         
+        // base path is in writer
+        if ( $this->_old ) {
+            $writer->backupOld($this->_old);
+        }
         
-        // @todo unpack new files
-        
+        $data = $this->_pkg->getData();
+        /* @var $data Lunette_File_Archive_Tar */
+        $data->extract($writer);
     }
 
     /**
      * Step 5: Post upgrade
      */
-    public function postUpgrade()
+    public function postUpgrade( Lunette_Package_Util_Extractor $writer )
     {
         if ( $this->_isUpgrade ) {
             $newVersion = $this->_pkg->getControlValue('version');
@@ -294,7 +319,7 @@ class Lunette_Package_Util_Unpacker
                             }   
                         }
                     }
-                    // @todo error unwind.  Remove new files, replace old files
+                    $writer->replaceOld();
                     $this->_exit();
                 }
                 // go to step 6
@@ -308,9 +333,21 @@ class Lunette_Package_Util_Unpacker
      * Step 6: Remove files in old package that aren't in new
      *
      */
-    public function removeOld()
+    public function removeOld( Lunette_Package_Util_Extractor $writer )
     {
-        // @todo remove obsolete files
+        $base = $writer->getBase();
+        
+        if ( $this->_old ) {
+            $inOldNotNew = array_diff($this->_old->getFiles(),
+                $this->_pkg->getFiles());
+
+            foreach( $inOldNotNew as $filename ) {
+                $realFilename = $base . '/' . $filename;
+                if ( @file_exists($realFilename) ) {
+                    @unlink($realFilename);
+                }
+            }
+        }
     }
     
     /**
@@ -341,7 +378,28 @@ class Lunette_Package_Util_Unpacker
      */
     public function disappear()
     {
-        // @todo remove disappearing packages
+        $disappearing = $this->_service->getWithMatchingFiles($this->_pkg, false);
+        $pkgFiles = $this->_pkg->getFiles();
+        foreach( $disappearing as $pkg ) {
+            $package = new Lunette_Package_Cached($pkg);
+
+            $disFiles = array_diff($package->getFiles(), $pkgFiles);
+            
+            // if all of the files have been replaced
+            if ( !count($disFiles) ) {
+                $runner = $package->getScriptRunner($this->_app);
+                if ( $this->_errorsOccurred($runner, 'postrm', array('disappear',
+                    $this->_pkg->getControlValue('package'),
+                    $this->_pkg->getControlValue('version'))) ) {
+                    // do nothing, just log errors
+                }
+                
+                $this->_service->setScripts($package, array('preinst'=>null,
+                    'postinst'=>null, 'prerm'=>null, 'postrm'=>null));
+                $this->_service->setFiles($package, array()); // no more files
+                $this->_service->setState($package, Lunette_Package_State::NotInstalled());
+            }
+        }
     }
     
     /**
@@ -349,15 +407,32 @@ class Lunette_Package_Util_Unpacker
      */
     public function lobotomizeFilelist()
     {
-        // @todo lobotomize conflicting file lists
+        $disappearing = $this->_service->getWithMatchingFiles($this->_pkg, false);
+        $pkgFiles = $this->_pkg->getFiles();
+        foreach( $disappearing as $pkg ) {
+             $package = new Lunette_Package_Cached($pkg);
+             
+             $disFiles = $package->getFiles(); 
+             
+             $newFiles = array();
+             foreach( $disFiles as $file ) {
+                 if ( !in_array($file, $pkgFiles) ) {
+                     $newFiles[] = $file;
+                 }
+             }
+             
+             if ( $disFiles != $newFiles ) {
+                 $this->_service->setFiles($package, $newFiles);
+             }
+        }
     }
     
     /**
      * Step 11: Remove backups of old files
      */
-    public function removeBackups( )
+    public function removeBackups( Lunette_Package_Util_Extractor $writer )
     {
-        // @todo remove old backups
+        $writer->removeOld();
     }
     
     /**

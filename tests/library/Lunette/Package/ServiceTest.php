@@ -212,6 +212,11 @@ class Lunette_Package_ServiceTest extends PHPUnit_Framework_TestCase
             $this->assertEquals(file_get_contents($script), $pkg->getScript($key));
         }
         $sandbox = null;
+        
+        $this->object->setScripts($pkg, array('preinst'=>null,'postinst'=>null,'prerm'=>null,'postrm'=>null));
+        foreach( $scripts as $key => $script ) {
+            $this->assertEquals(null, $pkg->getScript($key));
+        }
     }
 
     /**

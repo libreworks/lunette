@@ -61,6 +61,11 @@ class Lunette_Package_Meta extends Lunette_Package_Abstract
     protected $_data;
     
     /**
+     * @var array
+     */
+    protected $_ls;
+    
+    /**
      * @var Lunette_File_Sandbox
      */
     protected $_sandbox;
@@ -125,7 +130,10 @@ class Lunette_Package_Meta extends Lunette_Package_Abstract
      */
     public function getFiles()
     {
-        return $this->getData()->ls();
+        if ( $this->_ls === null ) {
+            $this->_ls = $this->getData()->ls();
+        }
+        return $this->_ls;
     }
     
     /**
@@ -157,7 +165,8 @@ class Lunette_Package_Meta extends Lunette_Package_Abstract
     {
         if ( $this->_state === null ) {
             $package = $service->getByName($this->_control['package']);
-            $state = ( $package ) ? $package->state : 0;
+            $state = ( $package && $package->version == $this->getControlValue('version') )
+                ? $package->state : 0;
             $this->_state = Xyster_Enum::valueOf('Lunette_Package_State', $state);
         }
         return $this->_state;

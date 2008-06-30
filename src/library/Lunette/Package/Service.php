@@ -134,9 +134,13 @@ class Lunette_Package_Service extends Lunette_Orm_Service
         require_once 'Lunette/File/Reader/File.php';
         foreach( $scripts as $scriptName => $filename ) {
             if ( in_array($scriptName, $scriptNames) ) {
-                $reader = new Lunette_File_Reader_File($filename);
-                // $reader will throw exception if file doesn't exist, etc.
-                $pkg->$scriptName = $reader->read();
+                if ( $filename === null ) {
+                    $pkg->$scriptName = null;
+                } else {
+                    $reader = new Lunette_File_Reader_File($filename);
+                    // $reader will throw exception if file doesn't exist, etc.
+                    $pkg->$scriptName = $reader->read();
+                }
             }
         }
         $this->_orm->commit();
