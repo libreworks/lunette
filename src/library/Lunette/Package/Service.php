@@ -71,15 +71,17 @@ class Lunette_Package_Service extends Lunette_Orm_Service
      * @param Lunette_Package_Interface $package
      * @return LunettePackageSet
      */
-    public function getWithMatchingFiles( Lunette_Package_Interface $package )
+    public function getWithMatchingFiles( Lunette_Package_Interface $package, $ignoreReplaces = true )
     {
         $query = $this->_orm->query('LunettePackage');
         $name = Xyster_Data_Field::named('name');
         $files = Xyster_Data_Field::named('files');
         $query->where($name->neq($package->getControlValue('package')));
-        foreach( $package->getRelations(Lunette_Package_Relation_Type::Replaces()) as $relation ) {
-            /* @var $relation Lunette_Package_Relation */
-            $query->where($name->neq($relation->getName()));
+        if ( $ignoreReplaces ) {
+            foreach( $package->getRelations(Lunette_Package_Relation_Type::Replaces()) as $relation ) {
+                /* @var $relation Lunette_Package_Relation */
+                $query->where($name->neq($relation->getName()));
+            }
         }
         $likes = array();
         foreach( $package->getFiles() as $file ) {

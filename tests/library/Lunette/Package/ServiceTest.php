@@ -144,6 +144,11 @@ class Lunette_Package_ServiceTest extends PHPUnit_Framework_TestCase
         $set = $this->object->getWithMatchingFiles(new Lunette_Package_Cached($package));
         $this->assertEquals(1, count($set));
         $this->assertTrue($set->contains($package3));
+        
+        $set = $this->object->getWithMatchingFiles(new Lunette_Package_Cached($package), false);
+        $this->assertEquals(2, count($set));
+        $this->assertTrue($set->contains($package3));
+        $this->assertTrue($set->contains($package4));
     }
 
     /**
