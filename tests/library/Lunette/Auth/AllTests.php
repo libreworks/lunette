@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Lunette. If not, see <http://www.gnu.org/licenses/>.
  * 
- * @copyright Copyright (c) SI Tec Consulting, LLC (http://www.sitec-consulting.net)
+ * @copyright Copyright (c) LibreWorks (http://libreworks.com)
  * @license http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @category Lunette
  * @package Lunette_Auth
